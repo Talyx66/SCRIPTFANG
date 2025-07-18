@@ -1,4 +1,6 @@
 
+
+
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit
 from PyQt6.QtGui import QMovie, QFont, QTextCursor
 from PyQt6.QtCore import Qt, QSize
@@ -11,16 +13,16 @@ class ScriptFangGUI(QWidget):
         self.setWindowTitle("ScriptFang 🐉")
         self.setFixedSize(1280, 720)
 
+        # Calculate GIF path one level up to assets
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        gif_path = os.path.join(base_dir, "assets", "dragonsscript.gif")
+        print("Resolved GIF path:", gif_path)
+
         # Background label for GIF
         self.bg_label = QLabel(self)
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         self.bg_label.setStyleSheet("background: black;")
-        self.bg_label.lower()  # Make sure it stays at the back
-
-        # Absolute GIF path
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        gif_path = os.path.join(base_dir, "assets", "dragonsscript.gif")
-        print("GIF path:", gif_path)
+        self.bg_label.lower()  # Keep it behind all widgets
 
         self.movie = QMovie(gif_path)
         if not self.movie.isValid():
@@ -49,7 +51,7 @@ class ScriptFangGUI(QWidget):
         )
         self.button.clicked.connect(self.generate_payload)
 
-        # Payload output
+        # Payload output box
         self.output = QTextEdit(self)
         self.output.setGeometry(390, 300, 500, 120)
         self.output.setReadOnly(True)
@@ -60,13 +62,14 @@ class ScriptFangGUI(QWidget):
         self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
 
     def resizeEvent(self, event):
-        # Resize background GIF label & scale movie when window resizes
+        # Keep GIF background scaled to window size
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         if self.movie and self.movie.isValid():
             self.movie.setScaledSize(QSize(self.width(), self.height()))
         super().resizeEvent(event)
 
     def generate_payload(self):
+        # Example payload, replace with your real logic
         payload = "<script>alert('ScriptFang 🔥 Payload!')</script>"
         self.output.setPlainText(payload)
         cursor = self.output.textCursor()
@@ -78,4 +81,3 @@ if __name__ == "__main__":
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
-
