@@ -57,7 +57,7 @@ class ScriptFangGUI(QWidget):
 
         # Payload output box
         self.output = QTextEdit(self)
-        self.output.setGeometry(390, 290, 660, 120)
+        self.output.setGeometry(150, 290, 660, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
             "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
