@@ -10,7 +10,7 @@ class ScriptFangGUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SCRIPTFANG")
-        self.setFixedSize(1320, 720)
+        self.setFixedSize(1280, 620)
 
         # Calculate GIF path
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
