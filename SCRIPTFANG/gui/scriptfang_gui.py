@@ -5,6 +5,7 @@ from PyQt6.QtGui import QMovie, QFont, QTextCursor
 from PyQt6.QtCore import Qt, QSize
 import sys
 import os
+import random
 
 class ScriptFangGUI(QWidget):
     def __init__(self):
@@ -38,7 +39,7 @@ class ScriptFangGUI(QWidget):
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
         self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 50, QFont.Weight.Bold))
+        self.title.setFont(QFont("Courier", 36, QFont.Weight.Bold))
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 30, 1280, 60)
 
@@ -50,15 +51,15 @@ class ScriptFangGUI(QWidget):
         )
         self.button.clicked.connect(self.generate_payload)
 
-        # Payload output box
+        # Payload output box (lowered)
         self.output = QTextEdit(self)
-        self.output.setGeometry(390, 440, 500, 120)
+        self.output.setGeometry(390, 360, 500, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
-            "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 8px;"
+            "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
         )
         self.output.setFont(QFont("Courier", 12))
-        self.output.setText("// XSS Payload appears here\n")
+        self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
 
     def resizeEvent(self, event):
         # Keep GIF background scaled to window size
@@ -68,8 +69,29 @@ class ScriptFangGUI(QWidget):
         super().resizeEvent(event)
 
     def generate_payload(self):
-        # Example payload, replace with your real logic
-        payload = "<script>alert('ScriptFang Payload!')</script>"
+        # Load from ../payloads/xss.txt
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        payload_file = os.path.join(base_dir, "payloads", "xss.txt")
+
+        payload = ""
+        try:
+            if os.path.exists(payload_file):
+                with open(payload_file, "r", encoding="utf-8") as f:
+                    payloads = [line.strip() for line in f if line.strip()]
+                if payloads:
+                    payload = random.choice(payloads)
+        except Exception as e:
+            print(f"❌ Error loading payloads: {e}")
+
+        # Fallback
+        if not payload:
+            payload = random.choice([
+                "<script>alert(1)</script>",
+                "<img src=x onerror=alert(document.domain)>",
+                "<svg/onload=alert(1337)>",
+                "<iframe srcdoc='<script>alert(0xBADF00D)</script>'>",
+            ])
+
         self.output.setPlainText(payload)
         cursor = self.output.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.Start)
@@ -80,3 +102,4 @@ if __name__ == "__main__":
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
+
