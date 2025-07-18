@@ -27,8 +27,6 @@ cd ScriptFang
 2. Make sure you're using Python 3.9+. Then install dependencies:
 
 ```bash
-Copy
-Edit
 pip install -r requirements.txt
 Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt.
 ```
@@ -36,9 +34,8 @@ Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.tx
 1.) Run the tool:
 
 ```bash
-Copy
-Edit
-python gui.py
+
+python3 gui.py
 ```
 
 
