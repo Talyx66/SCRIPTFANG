@@ -17,47 +17,48 @@ PyQt6-powered interface with live feedback, animated background, and intuitive c
 ## Export Capability
 Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
-## Installation
+# Installation
 1. Clone the Repository
-### bash
+```bash
 Copy
 Edit
 git clone https://github.com/Talyx66/ScriptFang.git
 cd ScriptFang
-2. Install Requirements
-Make sure you're using Python 3.9+. Then install dependencies:
+3. Install Requirements
 
-### bash
+2. Make sure you're using Python 3.9+. Then install dependencies:
+
+```bash
 Copy
 Edit
 pip install -r requirements.txt
 Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt.
 
 # Usage
-Run the tool:
+1.) Run the tool:
 
-### bash
+```bash
 Copy
 Edit
 python gui.py
 Steps:
 
-Enter your target URL (e.g., https://victim.com/search?q=).
+2. Enter your target URL (e.g., https://victim.com/search?q=).
 
-Choose a payload category or use Multi-Payload Generation.
+3. Choose a payload category or use Multi-Payload Generation.
 
-Click Test Payload or Fuzz Target to begin testing.
+4. Click Test Payload or Fuzz Target to begin testing.
 
-Monitor live output for reflection results or blocks.
+5. Monitor live output for reflection results or blocks.
 
-Export results via the Export Results button.
+6. Export results via the Export Results button.
 
 # Payload Management
-Payloads are stored in /tools/payloads/
+1. Payloads are stored in /tools/payloads/
 
-Each .txt file corresponds to a specific category
+2. Each .txt file corresponds to a specific category
 
-Edit or expand these files to supercharge your fuzzing arsenal
+3. Edit or expand these files to supercharge your fuzzing arsenal
 
 # Contribution
 Pull requests, payload improvements, and community contributions are always welcome.
