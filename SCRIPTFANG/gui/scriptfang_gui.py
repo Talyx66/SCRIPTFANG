@@ -73,7 +73,7 @@ class ScriptFangGUI(QWidget):
         super().resizeEvent(event)
 
     def generate_payload(self):
-        payload = "<script>alert('ScriptFang 🔥 Payload!')</script>"
+        payload = "<script>alert('ScriptFang Payload!')</script>"
         self.output.setPlainText(payload)
         cursor = self.output.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.Start)
