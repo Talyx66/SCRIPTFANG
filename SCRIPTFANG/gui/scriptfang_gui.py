@@ -38,7 +38,7 @@ class ScriptFangGUI(QWidget):
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
         self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 36, QFont.Weight.Bold))
+        self.title.setFont(QFont("Courier", 50, QFont.Weight.Bold))
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 30, 1280, 60)
 
@@ -52,13 +52,13 @@ class ScriptFangGUI(QWidget):
 
         # Payload output box
         self.output = QTextEdit(self)
-        self.output.setGeometry(390, 300, 500, 120)
+        self.output.setGeometry(390, 350, 500, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
             "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
         )
         self.output.setFont(QFont("Courier", 12))
-        self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
+        self.output.setText("// XSS Payload appears here\n")
 
     def resizeEvent(self, event):
         # Keep GIF background scaled to window size
