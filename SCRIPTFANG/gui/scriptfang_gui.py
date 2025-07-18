@@ -1,7 +1,7 @@
 
-from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit
 from PyQt6.QtGui import QMovie, QFont, QTextCursor
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 import sys
 import os
 
@@ -11,16 +11,13 @@ class ScriptFangGUI(QWidget):
         self.setWindowTitle("ScriptFang 🐉")
         self.setFixedSize(1280, 720)
 
-        # Setup layout
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-
         # Background label for GIF
         self.bg_label = QLabel(self)
-        self.bg_label.setGeometry(0, 0, 1280, 720)
-        self.bg_label.setScaledContents(True)  # Important: scale GIF to label size
+        self.bg_label.setGeometry(0, 0, self.width(), self.height())
+        self.bg_label.setStyleSheet("background: black;")
+        self.bg_label.lower()  # Make sure it stays at the back
 
-        # Construct absolute GIF path relative to this script file
+        # Absolute GIF path
         base_dir = os.path.dirname(os.path.abspath(__file__))
         gif_path = os.path.join(base_dir, "assets", "dragonsscript.gif")
         print("GIF path:", gif_path)
@@ -28,13 +25,14 @@ class ScriptFangGUI(QWidget):
         self.movie = QMovie(gif_path)
         if not self.movie.isValid():
             print(f"❌ Failed to load GIF from {gif_path}")
-            self.bg_label.setStyleSheet("background-color: black;")
+            self.bg_label.setText("Failed to load GIF")
+            self.bg_label.setStyleSheet("color: red; background: black; font-size: 24px;")
         else:
+            self.movie.setCacheMode(QMovie.CacheMode.CacheAll)
+            self.movie.setSpeed(100)
+            self.movie.setScaledSize(QSize(self.width(), self.height()))
             self.bg_label.setMovie(self.movie)
             self.movie.start()
-
-        # Add bg_label to layout at the bottom
-        self.bg_label.lower()  # Keep it behind everything
 
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
@@ -61,6 +59,13 @@ class ScriptFangGUI(QWidget):
         self.output.setFont(QFont("Courier", 12))
         self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
 
+    def resizeEvent(self, event):
+        # Resize background GIF label & scale movie when window resizes
+        self.bg_label.setGeometry(0, 0, self.width(), self.height())
+        if self.movie and self.movie.isValid():
+            self.movie.setScaledSize(QSize(self.width(), self.height()))
+        super().resizeEvent(event)
+
     def generate_payload(self):
         payload = "<script>alert('ScriptFang 🔥 Payload!')</script>"
         self.output.setPlainText(payload)
@@ -73,3 +78,4 @@ if __name__ == "__main__":
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
+
