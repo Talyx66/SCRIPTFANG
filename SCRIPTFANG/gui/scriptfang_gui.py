@@ -409,7 +409,7 @@ class ScriptFangGUI(QWidget):
     def start_fuzzing(self):
         url = self.url_input.text().strip()
         if not url:
-            self.feedback.setText("⚠️ Enter a valid target URL first.")
+            self.feedback.setText("⚠ Enter a valid target URL first.")
             return
 
         # Load payloads from xss.txt for fuzzing
@@ -418,13 +418,14 @@ class ScriptFangGUI(QWidget):
             with open(path, 'r', encoding='utf-8') as f:
                 payloads = [line.strip() for line in f if line.strip()]
         except Exception as e:
-            self.feedback.setText(f"⚠️ Failed to load payloads: {e}")
+            self.feedback.setText(f"⚠ Failed to load payloads: {e}")
             return
 
         if not payloads:
-            self.feedback.setText("⚠️
+            self.feedback.setText("⚠
 
-if __name__ == "__main__":
+                                  
+   if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
     gui.show()
