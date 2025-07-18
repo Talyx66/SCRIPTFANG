@@ -52,13 +52,13 @@ class ScriptFangGUI(QWidget):
 
         # Payload output box
         self.output = QTextEdit(self)
-        self.output.setGeometry(390, 300, 500, 120)
+        self.output.setGeometry(390, 420, 500, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
             "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
         )
         self.output.setFont(QFont("Courier", 12))
-        self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
+        self.output.setText("// XSS Payload will appear here\n")
 
         # Footer credit label
         self.credit = QLabel("Made by Talyx · GitHub: Talyx66", self)
