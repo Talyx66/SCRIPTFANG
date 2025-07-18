@@ -137,6 +137,9 @@ class ScriptFangGUI(QWidget):
             btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
+        # Shift amount to move left
+        shift_left = 100
+       
         # Generate Multiple Payloads button centered below payload buttons
         multi_btn_width = 100
         multi_btn_height = 20
