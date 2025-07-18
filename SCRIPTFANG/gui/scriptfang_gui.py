@@ -1,6 +1,6 @@
 
-from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit
-from PyQt6.QtGui import QMovie, QFont
+from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit, QVBoxLayout
+from PyQt6.QtGui import QMovie, QFont, QTextCursor
 from PyQt6.QtCore import Qt
 import sys
 import os
@@ -11,9 +11,18 @@ class ScriptFangGUI(QWidget):
         self.setWindowTitle("ScriptFang 🐉")
         self.setFixedSize(1280, 720)
 
-        # Load the GIF background from assets folder
+        # Setup layout
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
+        # Background label for GIF
         self.bg_label = QLabel(self)
-        gif_path = os.path.abspath(os.path.join("assets", "dragonsscript.gif"))
+        self.bg_label.setGeometry(0, 0, 1280, 720)
+        self.bg_label.setScaledContents(True)  # Important: scale GIF to label size
+
+        # Construct absolute GIF path relative to this script file
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        gif_path = os.path.join(base_dir, "assets", "dragonsscript.gif")
         print("GIF path:", gif_path)
 
         self.movie = QMovie(gif_path)
@@ -21,11 +30,11 @@ class ScriptFangGUI(QWidget):
             print(f"❌ Failed to load GIF from {gif_path}")
             self.bg_label.setStyleSheet("background-color: black;")
         else:
-            self.movie.setScaledSize(self.size())
             self.bg_label.setMovie(self.movie)
-            self.bg_label.setGeometry(0, 0, 1280, 720)
-            self.bg_label.lower()  # Send background to back
             self.movie.start()
+
+        # Add bg_label to layout at the bottom
+        self.bg_label.lower()  # Keep it behind everything
 
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
@@ -40,8 +49,9 @@ class ScriptFangGUI(QWidget):
         self.button.setStyleSheet(
             "background-color: rgba(0,128,0,0.7); color: white; font-size: 16px; border-radius: 8px;"
         )
+        self.button.clicked.connect(self.generate_payload)
 
-        # Payload output in the center (as if created by dragon's flame)
+        # Payload output
         self.output = QTextEdit(self)
         self.output.setGeometry(390, 300, 500, 120)
         self.output.setReadOnly(True)
@@ -49,8 +59,14 @@ class ScriptFangGUI(QWidget):
             "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
         )
         self.output.setFont(QFont("Courier", 12))
-        self.output.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
+
+    def generate_payload(self):
+        payload = "<script>alert('ScriptFang 🔥 Payload!')</script>"
+        self.output.setPlainText(payload)
+        cursor = self.output.textCursor()
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
+        self.output.setTextCursor(cursor)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
