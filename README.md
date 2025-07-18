@@ -1,60 +1,71 @@
-ScriptFang — Advanced XSS Payload Generator & Fuzzer
-Welcome to ScriptFang, the ultimate tool designed for penetration testers and security researchers to generate, test, and fuzz XSS payloads with ease and power.
+# ScriptFang — Advanced XSS Payload Generator & Fuzzer
+Welcome to ScriptFang, the ultimate tool for penetration testers and security researchers to generate, test, and fuzz XSS payloads with power, precision, and style.
 
-#Features
--Diverse Payload Generation: Choose from a wide range of XSS payload types (classic, WAF bypass, Angular, script breakout, Cloudflare bypass, and more).
+# Features
+ ## Diverse Payload Generation
+Generate classic, WAF bypass, Angular, script breakout, Cloudflare bypass payloads, and more.
 
--Multi-Payload Generation: Generate multiple payloads at once to increase fuzzing coverage.
+## Multi-Payload Generation
+Create multiple payloads at once to maximize fuzzing coverage.
 
--Integrated Fuzzer: Automatically fuzz targets with all payloads from your payload repository, tracking reflections, blocks, and errors live.
+## Integrated Fuzzer
+Automatically fuzz target URLs with your entire payload arsenal. Tracks reflections, blocks, and errors in real time.
 
--Sleek GUI: PyQt6-based intuitive interface with live feedback and animated background for a smooth experience.
+## Sleek GUI
+PyQt6-powered interface with live feedback, animated background, and intuitive controls.
 
--Export Capability: Save your generated payloads for offline use or manual testing.
+## Export Capability
+Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
-#Installation
-Clone or download this repository.
+## Installation
+1. Clone the Repository
+### bash
+Copy
+Edit
+git clone https://github.com/Talyx66/ScriptFang.git
+cd ScriptFang
+2. Install Requirements
+Make sure you're using Python 3.9+. Then install dependencies:
 
-Make sure you have Python 3.9+ installed.
-
-#Install dependencies:
-
-bash
+### bash
 Copy
 Edit
 pip install -r requirements.txt
-(Make sure PyQt6 and requests are installed.)
+Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt.
 
-#Usage
+# Usage
 Run the tool:
 
-bash
+### bash
 Copy
 Edit
 python gui.py
-Enter the target URL (e.g., https://victim.com/search?q=).
+Steps:
 
-Select a payload category or generate multiple payloads.
+Enter your target URL (e.g., https://victim.com/search?q=).
 
-Click Test Payload to check reflection or Fuzz Target to fuzz the target with all available payloads.
+Choose a payload category or use Multi-Payload Generation.
 
-Review live feedback in the output panel.
+Click Test Payload or Fuzz Target to begin testing.
 
-Export payloads if desired.
+Monitor live output for reflection results or blocks.
 
-Payload Management
-Payload files are stored under /tools/payloads/.
+Export results via the Export Results button.
 
-Each .txt file contains payloads of a specific category.
+# Payload Management
+Payloads are stored in /tools/payloads/
 
-Add or edit payload files to customize your fuzzing arsenal.
+Each .txt file corresponds to a specific category
 
-Contribution
-Contributions and payload improvements are welcome! Feel free to fork the repo and submit pull requests.
+Edit or expand these files to supercharge your fuzzing arsenal
 
-Disclaimer
-Use ScriptFang responsibly. Only test systems you have explicit permission to assess. The author is not liable for misuse.
+# Contribution
+Pull requests, payload improvements, and community contributions are always welcome.
 
-#Contact
-Created by Talyx
-GitHub: Github.com/Talyx66
+# Disclaimer
+Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
+The creator is not liable for misuse or unauthorized activities.
+
+# Contact
+Created by: Talyx
+GitHub: github.com/Talyx66
