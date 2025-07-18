@@ -1,13 +1,42 @@
+
+
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit, QFileDialog
 )
 from PyQt6.QtGui import QMovie, QFont, QTextCursor
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QThread, pyqtSignal  # <-- added here
 import sys
 import os
 import random
 import re
 import requests
+
+
+# Fuzzer thread to avoid freezing GUI
+class FuzzThread(QThread):
+    update_signal = pyqtSignal(str)
+    finished_signal = pyqtSignal()
+
+    def __init__(self, url, payloads):
+        super().__init__()
+        self.url = url
+        self.payloads = payloads
+
+    def run(self):
+        for payload in self.payloads:
+            test_url = self.url + payload
+            try:
+                resp = requests.get(test_url, timeout=5)
+                if payload in resp.text:
+                    result = f"✅ Reflected: {payload[:40]}..."
+                elif resp.status_code in (403, 406):
+                    result = f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}..."
+                else:
+                    result = f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}..."
+            except Exception as e:
+                result = f"❌ Error: {str(e)}"
+            self.update_signal.emit(result)
+        self.finished_signal.emit()
 
 
 class ScriptFangGUI(QWidget):
@@ -173,6 +202,15 @@ class ScriptFangGUI(QWidget):
         )
         self.export_button.clicked.connect(self.export_payloads)
 
+        # --- ADD FUZZ BUTTON HERE ---
+        fuzz_btn_x = start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing
+        self.fuzz_button = QPushButton("Fuzz Target", self)
+        self.fuzz_button.setGeometry(fuzz_btn_x, multi_btn_y, 140, 40)
+        self.fuzz_button.setStyleSheet(
+            "background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;"
+        )
+        self.fuzz_button.clicked.connect(self.start_fuzzing)
+
         # Footer label (GitHub + credit) at the bottom center
         footer_height = 26
         self.footer = QLabel("GitHub: Github.com/Talyx66  |  Made by Talyx", self)
@@ -232,7 +270,7 @@ class ScriptFangGUI(QWidget):
         export_btn_width, export_btn_height = 140, 40
         btn_spacing = 15
 
-        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 2
+        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 3  # added one more spacing for fuzz button
         multi_btn_y = second_row_y + btn_height + 25
         start_x = (self.width() - total_width) // 2
 
@@ -244,13 +282,17 @@ class ScriptFangGUI(QWidget):
             export_btn_width,
             export_btn_height
         )
+        self.fuzz_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing,
+            multi_btn_y,
+            140,
+            40
+        )
 
         footer_height = 25
         self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
 
         super().resizeEvent(event)
-
-    # ... rest of your methods unchanged (generate_payload_from_file, generate_multiple_payloads, etc.) ...
 
     def generate_payload_from_file(self, filename):
         try:
@@ -362,6 +404,25 @@ class ScriptFangGUI(QWidget):
                 self.feedback.setStyleSheet("color: #ff5555;")
                 self.feedback.setText(f"❌ Failed to export: {e}")
 
+    # --- FUZZING METHODS ADDED BELOW ---
+
+    def start_fuzzing(self):
+        url = self.url_input.text().strip()
+        if not url:
+            self.feedback.setText("⚠️ Enter a valid target URL first.")
+            return
+
+        # Load payloads from xss.txt for fuzzing
+        path = os.path.join(self.payload_dir, "xss.txt")
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                payloads = [line.strip() for line in f if line.strip()]
+        except Exception as e:
+            self.feedback.setText(f"⚠️ Failed to load payloads: {e}")
+            return
+
+        if not payloads:
+            self.feedback.setText("⚠️
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
