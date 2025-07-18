@@ -13,7 +13,7 @@ import requests
 class ScriptFangGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ScriptFang")
+        self.setWindowTitle("SCRIPTFANG")
         self.setFixedSize(1024, 600)  # Resized window
 
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -174,10 +174,10 @@ class ScriptFangGUI(QWidget):
         self.export_button.clicked.connect(self.export_payloads)
 
         # Footer label (GitHub + credit) at the bottom center
-        footer_height = 25
-        self.footer = QLabel("GitHub: github.com/Talyx66  |  Made by Talyx", self)
+        footer_height = 26
+        self.footer = QLabel("GitHub: Github.com/Talyx66  |  Made by Talyx", self)
         self.footer.setStyleSheet("color: #00ff00; background: transparent;")
-        self.footer.setFont(QFont("Courier", 10))
+        self.footer.setFont(QFont("Courier", 13))
         self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
 
