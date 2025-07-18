@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout
-from PyQt6.QtGui import QMovie, QFont, QColor, QPalette
+from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton
+from PyQt6.QtGui import QMovie, QFont
 from PyQt6.QtCore import Qt
 import sys
 import os
@@ -10,21 +10,28 @@ class ScriptFangGUI(QWidget):
         self.setWindowTitle("ScriptFang 🐉")
         self.setFixedSize(1280, 720)
 
-        # Background GIF
+        # Load the GIF background
         self.bg_label = QLabel(self)
-        gif_path = os.path.join("assets", "dragonsscript.gif")
+        gif_path = os.path.join("..", "assets", "dragonsscript.gif")
         self.movie = QMovie(gif_path)
+
+        if not self.movie.isValid():
+            print("❌ GIF failed to load. Check path or file format.")
+            return
+
         self.bg_label.setMovie(self.movie)
+        self.movie.setScaledSize(self.size())
         self.movie.start()
         self.bg_label.setGeometry(0, 0, 1280, 720)
 
-        # Overlay widgets
+        # Title label
         self.title = QLabel("SCRIPTFANG", self)
-        self.title.setStyleSheet("color: #00ff00;")  # toxic green
+        self.title.setStyleSheet("color: #00ff00; background: transparent;")
         self.title.setFont(QFont("Courier", 36, QFont.Weight.Bold))
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 30, 1280, 60)
 
+        # Generate Button
         self.button = QPushButton("Generate Payload", self)
         self.button.setGeometry(540, 600, 200, 50)
         self.button.setStyleSheet(
@@ -36,4 +43,5 @@ if __name__ == "__main__":
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
+
 
