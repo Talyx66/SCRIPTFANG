@@ -19,13 +19,11 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
 # Installation
 1. Clone the Repository
-``bash
-Copy
-Edit
+```bash
 git clone https://github.com/Talyx66/ScriptFang.git
 cd ScriptFang
-3. Install Requirements
-
+3. Install Requirements 
+```
 2. Make sure you're using Python 3.9+. Then install dependencies:
 
 ```bash
@@ -42,6 +40,15 @@ Copy
 Edit
 python gui.py
 ```
+
+
+
+
+![Built](https://img.shields.io/badge/Built%20For-Kali_Linux-8B0000?style=for-the-badge)
+![Language](https://img.shields.io/badge/Python-3.11-blue?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Live-green?style=plastic)
+![Creator](https://img.shields.io/badge/Made%20by-Talyx-purple?style=flat&logo=github)
+
 ## Steps:
 
 2. Enter your target URL (e.g., https://victim.com/search?q=).
