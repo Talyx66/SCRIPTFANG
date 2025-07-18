@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (
-    QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit, QComboBox, QCheckBox
+    QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit
 )
 from PyQt6.QtGui import QMovie, QFont, QTextCursor
 from PyQt6.QtCore import Qt, QSize
@@ -63,29 +63,6 @@ class ScriptFangGUI(QWidget):
         )
         self.url_input.setFont(QFont("Courier", 12))
 
-        # Context selector combo box - placed right of URL input
-        combo_width = 180
-        combo_x = (self.width() + input_width) // 2 + 10  # 10px right to url input
-        self.context_combo = QComboBox(self)
-        self.context_combo.setGeometry(combo_x, 90, combo_width, input_height)
-        self.context_combo.setStyleSheet(
-            "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 13px; border: 2px solid #00ff00; border-radius: 10px;"
-        )
-        self.context_combo.setFont(QFont("Courier", 11))
-        self.context_combo.addItems([
-            "General", "HTML Context", "Attribute Context", "JavaScript Context"
-        ])
-
-        # WAF Bypass checkbox - right of combo box
-        cb_width = 120
-        cb_x2 = combo_x + combo_width + 10
-        self.waf_checkbox = QCheckBox("WAF Bypass", self)
-        self.waf_checkbox.setGeometry(cb_x2, 90, cb_width, input_height)
-        self.waf_checkbox.setStyleSheet(
-            "color: #00ff00; font-size: 13px;"
-        )
-        self.waf_checkbox.setFont(QFont("Courier", 11))
-
         # Payload output box - centered horizontally
         output_width = 700
         output_height = 110
@@ -145,7 +122,7 @@ class ScriptFangGUI(QWidget):
             btn.setStyleSheet(
                 "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;"
             )
-            btn.clicked.connect(lambda _, f=filename: self.generate_payload_from_file(f))
+            btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
         # Second row buttons
@@ -157,7 +134,7 @@ class ScriptFangGUI(QWidget):
             btn.setStyleSheet(
                 "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;"
             )
-            btn.clicked.connect(lambda _, f=filename: self.generate_payload_from_file(f))
+            btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
         # Generate Multiple Payloads button centered below payload buttons
@@ -207,7 +184,7 @@ class ScriptFangGUI(QWidget):
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         if self.movie and self.movie.isValid():
             self.movie.setScaledSize(QSize(self.width(), self.height()))
-
+        # Re-center input, output, feedback, buttons, footer on resize
         input_width = 600
         output_width = 700
         btn_width = 140
@@ -221,12 +198,6 @@ class ScriptFangGUI(QWidget):
             input_width,
             35
         )
-
-        # Reposition context combo box and checkbox based on url_input geometry
-        combo_x = (self.width() + input_width) // 2 + 10
-        self.context_combo.setGeometry(combo_x, 90, 180, 35)
-        self.waf_checkbox.setGeometry(combo_x + 180 + 10, 90, 120, 35)
-
         self.output.setGeometry(
             (self.width() - output_width) // 2,
             150,
@@ -287,33 +258,6 @@ class ScriptFangGUI(QWidget):
                 self.current_payloads = []
                 self.feedback.setText("")
                 return
-
-            # Check WAF Bypass toggle: if checked and filename != waf_bypass.txt, append waf bypass payloads
-            waf_enabled = self.waf_checkbox.isChecked()
-            if waf_enabled and filename != "waf_bypass.txt":
-                waf_path = os.path.join(self.payload_dir, "waf_bypass.txt")
-                with open(waf_path, 'r', encoding='utf-8') as waf_file:
-                    waf_payloads = [line.strip() for line in waf_file if line.strip()]
-                # Mix waf payloads with original payloads
-                payloads.extend(waf_payloads)
-
-            # Apply context-based payload filtering or modification
-            context = self.context_combo.currentText()
-
-            # For example: you could filter or tweak payloads based on context, here just a dummy example
-            if context == "HTML Context":
-                payloads = [p for p in payloads if "<script" not in p.lower()]
-            elif context == "Attribute Context":
-                payloads = [p for p in payloads if "onerror" in p.lower() or "onload" in p.lower()]
-            elif context == "JavaScript Context":
-                payloads = [p for p in payloads if "<script" in p.lower()]
-
-            if not payloads:
-                self.output.setPlainText("// No payloads found after applying context filter.")
-                self.current_payloads = []
-                self.feedback.setText("")
-                return
-
             payload = random.choice(payloads)
             self.current_payloads = [payload]
             self.output.setPlainText(payload)
@@ -336,29 +280,6 @@ class ScriptFangGUI(QWidget):
                 self.current_payloads = []
                 self.feedback.setText("")
                 return
-
-            # If WAF bypass enabled, append waf bypass payloads to the list
-            if self.waf_checkbox.isChecked():
-                waf_path = os.path.join(self.payload_dir, "waf_bypass.txt")
-                with open(waf_path, 'r', encoding='utf-8') as waf_file:
-                    waf_payloads = [line.strip() for line in waf_file if line.strip()]
-                payloads.extend(waf_payloads)
-
-            # Context filtering (same as single payload)
-            context = self.context_combo.currentText()
-            if context == "HTML Context":
-                payloads = [p for p in payloads if "<script" not in p.lower()]
-            elif context == "Attribute Context":
-                payloads = [p for p in payloads if "onerror" in p.lower() or "onload" in p.lower()]
-            elif context == "JavaScript Context":
-                payloads = [p for p in payloads if "<script" in p.lower()]
-
-            if not payloads:
-                self.output.setPlainText("// No payloads found after applying context filter.")
-                self.current_payloads = []
-                self.feedback.setText("")
-                return
-
             selected = random.sample(payloads, min(5, len(payloads)))
             self.current_payloads = selected
             self.output.setPlainText("\n\n".join(selected))
@@ -368,4 +289,61 @@ class ScriptFangGUI(QWidget):
             self.feedback.setText("")
         except Exception as e:
             self.output.setPlainText(f"⚠️ Error loading xss.txt: {e}")
-           
+            self.current_payloads = []
+            self.feedback.setText("")
+
+    def test_payload(self):
+        target_url = self.url_input.text().strip()
+        if not target_url:
+            self.feedback.setText("⚠️ Enter a valid target URL first.")
+            return
+        if not self.current_payloads:
+            self.feedback.setText("⚠️ Generate payload(s) first.")
+            return
+
+        self.feedback.setText("⏳ Testing payload(s) on target...")
+        self.repaint()  # Force UI update
+
+        results = []
+
+        for payload in self.current_payloads:
+            test_url = target_url + payload
+            try:
+                resp = requests.get(test_url, timeout=10)
+                content = resp.text
+
+                patterns = [
+                    re.escape(payload),
+                    r"(?i)<script>alert\(",
+                    r"(?i)onerror=",
+                    r"(?i)onload=",
+                    r"(?i)javascript:",
+                    r"(?i)document\.cookie",
+                ]
+
+                matched = any(re.search(pattern, content) for pattern in patterns)
+
+                if matched:
+                    results.append(f"✅ Payload reflected: {payload[:40]}...")
+                else:
+                    if resp.status_code in (403, 406):
+                        results.append(f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}...")
+                    elif resp.status_code >= 500:
+                        results.append(f"⚠️ Server error (HTTP {resp.status_code}): {payload[:40]}...")
+                    else:
+                        results.append(f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}...")
+
+            except requests.exceptions.Timeout:
+                results.append(f"❌ Timeout: {payload[:40]}...")
+            except requests.exceptions.RequestException as e:
+                results.append(f"❌ Request error: {e}")
+
+        self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
+        self.feedback.setText("\n".join(results))
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    gui = ScriptFangGUI()
+    gui.show()
+    sys.exit(app.exec())
