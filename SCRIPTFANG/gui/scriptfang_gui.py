@@ -137,48 +137,33 @@ class ScriptFangGUI(QWidget):
             btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
-        # Shift amount to move left
-        shift_left = 100
-       
-        # Generate Multiple Payloads button centered below payload buttons
-        multi_btn_width = 100
-        multi_btn_height = 20
+        # Group the three buttons below payload buttons and center them as a block
+        multi_btn_width, multi_btn_height = 140, 40
+        test_btn_width, test_btn_height = 140, 40
+        export_btn_width, export_btn_height = 140, 40
+        btn_spacing = 15
+
+        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 2
         multi_btn_y = second_row_y + btn_height + 25
+        start_x = (self.width() - total_width) // 2
+
         self.multi_button = QPushButton("Generate Multiple Payloads", self)
-        self.multi_button.setGeometry(
-            (self.width() - multi_btn_width) // 2,
-            multi_btn_y,
-            multi_btn_width,
-            multi_btn_height
-        )
+        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
         self.multi_button.setStyleSheet(
             "background-color: rgba(0,100,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
         )
         self.multi_button.clicked.connect(self.generate_multiple_payloads)
 
-        # Test Payload button next to multi_button
-        test_btn_width = 100
-        test_btn_height = 20
-        test_btn_x = (self.width() + multi_btn_width) // 2 + 15
         self.test_button = QPushButton("Test Payload", self)
-        self.test_button.setGeometry(
-            test_btn_x,
-            multi_btn_y,
-            test_btn_width,
-            test_btn_height
-        )
+        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
         self.test_button.setStyleSheet(
             "background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
         )
         self.test_button.clicked.connect(self.test_payload)
 
-        # Export Payloads button next to Test Payload
-        export_btn_width = 100
-        export_btn_height = 20
-        export_btn_x = test_btn_x + test_btn_width + 15
         self.export_button = QPushButton("Export Payload(s)", self)
         self.export_button.setGeometry(
-            export_btn_x,
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
             multi_btn_y,
             export_btn_width,
             export_btn_height
@@ -242,31 +227,19 @@ class ScriptFangGUI(QWidget):
             x = start_x + idx * (btn_width + spacing)
             self.buttons[label].setGeometry(x, second_row_y, btn_width, btn_height)
 
-        multi_btn_width = 200
-        multi_btn_height = 40
+        multi_btn_width, multi_btn_height = 140, 40
+        test_btn_width, test_btn_height = 140, 40
+        export_btn_width, export_btn_height = 140, 40
+        btn_spacing = 15
+
+        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 2
         multi_btn_y = second_row_y + btn_height + 25
-        self.multi_button.setGeometry(
-            (self.width() - multi_btn_width) // 2,
-            multi_btn_y,
-            multi_btn_width,
-            multi_btn_height
-        )
+        start_x = (self.width() - total_width) // 2
 
-        test_btn_width = 140
-        test_btn_height = 40
-        test_btn_x = (self.width() + multi_btn_width) // 2 + 15
-        self.test_button.setGeometry(
-            test_btn_x,
-            multi_btn_y,
-            test_btn_width,
-            test_btn_height
-        )
-
-        export_btn_width = 140
-        export_btn_height = 40
-        export_btn_x = test_btn_x + test_btn_width + 15
+        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
+        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
         self.export_button.setGeometry(
-            export_btn_x,
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
             multi_btn_y,
             export_btn_width,
             export_btn_height
@@ -276,6 +249,8 @@ class ScriptFangGUI(QWidget):
         self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
 
         super().resizeEvent(event)
+
+    # ... rest of your methods unchanged (generate_payload_from_file, generate_multiple_payloads, etc.) ...
 
     def generate_payload_from_file(self, filename):
         try:
@@ -367,7 +342,6 @@ class ScriptFangGUI(QWidget):
             except requests.exceptions.RequestException as e:
                 results.append(f"❌ Request error: {e}")
 
-        # Update feedback with all results joined by newlines
         self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
         self.feedback.setText("\n".join(results))
 
