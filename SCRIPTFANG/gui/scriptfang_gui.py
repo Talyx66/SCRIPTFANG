@@ -138,8 +138,8 @@ class ScriptFangGUI(QWidget):
             self.buttons[label] = btn
 
         # Generate Multiple Payloads button centered below payload buttons
-        multi_btn_width = 200
-        multi_btn_height = 40
+        multi_btn_width = 
+        multi_btn_height = 
         multi_btn_y = second_row_y + btn_height + 25
         self.multi_button = QPushButton("Generate Multiple Payloads", self)
         self.multi_button.setGeometry(
@@ -154,8 +154,8 @@ class ScriptFangGUI(QWidget):
         self.multi_button.clicked.connect(self.generate_multiple_payloads)
 
         # Test Payload button next to multi_button
-        test_btn_width = 140
-        test_btn_height = 40
+        test_btn_width = 
+        test_btn_height = 
         test_btn_x = (self.width() + multi_btn_width) // 2 + 15
         self.test_button = QPushButton("Test Payload", self)
         self.test_button.setGeometry(
@@ -170,8 +170,8 @@ class ScriptFangGUI(QWidget):
         self.test_button.clicked.connect(self.test_payload)
 
         # Export Payloads button next to Test Payload
-        export_btn_width = 140
-        export_btn_height = 40
+        export_btn_width = 
+        export_btn_height = 
         export_btn_x = test_btn_x + test_btn_width + 15
         self.export_button = QPushButton("Export Payload(s)", self)
         self.export_button.setGeometry(
