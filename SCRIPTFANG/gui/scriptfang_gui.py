@@ -19,15 +19,13 @@ class ScriptFangGUI(QWidget):
         self.movie = QMovie(gif_path)
         if not self.movie.isValid():
             print(f"❌ Failed to load GIF from {gif_path}")
-            return
-
-        self.movie.setScaledSize(self.size())
-        self.bg_label.setMovie(self.movie)
-        self.bg_label.setGeometry(0, 0, 1280, 720)
-        self.bg_label.lower()  # Send background to back
-
-        self.movie.setParent(self)  # Prevent garbage collection
-        self.movie.start()
+            self.bg_label.setStyleSheet("background-color: black;")
+        else:
+            self.movie.setScaledSize(self.size())
+            self.bg_label.setMovie(self.movie)
+            self.bg_label.setGeometry(0, 0, 1280, 720)
+            self.bg_label.lower()  # Send background to back
+            self.movie.start()
 
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
@@ -59,4 +57,3 @@ if __name__ == "__main__":
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
-
