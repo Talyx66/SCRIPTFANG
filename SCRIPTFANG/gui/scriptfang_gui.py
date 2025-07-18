@@ -1,4 +1,3 @@
-
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit
 )
@@ -56,15 +55,23 @@ class ScriptFangGUI(QWidget):
 
         # Generate Payload Button
         self.button = QPushButton("Generate Payload", self)
-        self.button.setGeometry(390, 600, 200, 50)
+        self.button.setGeometry(390, 600, 180, 50)
         self.button.setStyleSheet(
             "background-color: rgba(0,128,0,0.7); color: white; font-size: 16px; border-radius: 8px;"
         )
         self.button.clicked.connect(self.generate_payload)
 
+        # Generate Multiple Payloads Button
+        self.multi_button = QPushButton("Generate Multiple Payloads", self)
+        self.multi_button.setGeometry(590, 600, 250, 50)
+        self.multi_button.setStyleSheet(
+            "background-color: rgba(0,100,0,0.7); color: white; font-size: 16px; border-radius: 8px;"
+        )
+        self.multi_button.clicked.connect(self.generate_multiple_payloads)
+
         # Test Payload Button
         self.test_button = QPushButton("Test Payload", self)
-        self.test_button.setGeometry(700, 600, 200, 50)
+        self.test_button.setGeometry(870, 600, 180, 50)
         self.test_button.setStyleSheet(
             "background-color: rgba(128,0,0,0.7); color: white; font-size: 16px; border-radius: 8px;"
         )
@@ -72,7 +79,7 @@ class ScriptFangGUI(QWidget):
 
         # Payload output box
         self.output = QTextEdit(self)
-        self.output.setGeometry(390, 430, 500, 120)
+        self.output.setGeometry(390, 430, 660, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
             "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
@@ -82,7 +89,7 @@ class ScriptFangGUI(QWidget):
 
         # Feedback label
         self.feedback = QLabel("", self)
-        self.feedback.setGeometry(390, 560, 510, 30)
+        self.feedback.setGeometry(390, 560, 660, 30)
         self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
         self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -93,8 +100,8 @@ class ScriptFangGUI(QWidget):
         self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.footer.setGeometry(0, 680, 1280, 30)
 
-        # Store current payload (for testing)
-        self.current_payload = ""
+        # Store current payloads for testing (list)
+        self.current_payloads = []
 
     def resizeEvent(self, event):
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
@@ -107,14 +114,43 @@ class ScriptFangGUI(QWidget):
             payload_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tools', 'payloads', 'xss.txt')
             with open(payload_path, 'r') as f:
                 payloads = [line.strip() for line in f if line.strip()]
-            self.current_payload = random.choice(payloads) if payloads else "<script>alert('xss')</script>"
-            self.output.setPlainText(self.current_payload)
+            if not payloads:
+                self.output.setPlainText("// No payloads found in file.")
+                self.current_payloads = []
+                self.feedback.setText("")
+                return
+            payload = random.choice(payloads)
+            self.current_payloads = [payload]
+            self.output.setPlainText(payload)
             cursor = self.output.textCursor()
             cursor.movePosition(QTextCursor.MoveOperation.Start)
             self.output.setTextCursor(cursor)
             self.feedback.setText("")
         except Exception as e:
             self.output.setPlainText(f"⚠️ Error loading payloads: {e}")
+            self.current_payloads = []
+            self.feedback.setText("")
+
+    def generate_multiple_payloads(self):
+        try:
+            payload_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tools', 'payloads', 'xss.txt')
+            with open(payload_path, 'r') as f:
+                payloads = [line.strip() for line in f if line.strip()]
+            if not payloads:
+                self.output.setPlainText("// No payloads found in file.")
+                self.current_payloads = []
+                self.feedback.setText("")
+                return
+            selected = random.sample(payloads, min(5, len(payloads)))
+            self.current_payloads = selected
+            self.output.setPlainText("\n\n".join(selected))
+            cursor = self.output.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.Start)
+            self.output.setTextCursor(cursor)
+            self.feedback.setText("")
+        except Exception as e:
+            self.output.setPlainText(f"⚠️ Error loading payloads: {e}")
+            self.current_payloads = []
             self.feedback.setText("")
 
     def test_payload(self):
@@ -122,59 +158,52 @@ class ScriptFangGUI(QWidget):
         if not target_url:
             self.feedback.setText("⚠️ Enter a valid target URL first.")
             return
-        if not self.current_payload:
-            self.feedback.setText("⚠️ Generate a payload first.")
+        if not self.current_payloads:
+            self.feedback.setText("⚠️ Generate payload(s) first.")
             return
 
-        # Inject payload into URL param — assumes the target URL ends with '=' or expects query param
-        test_url = target_url + self.current_payload
+        self.feedback.setText("⏳ Testing payload(s) on target...")
+        self.repaint()  # Force UI update
 
-        try:
-            self.feedback.setText("⏳ Testing payload on target...")
-            self.repaint()  # Update UI immediately
+        results = []
 
-            resp = requests.get(test_url, timeout=10)
+        for payload in self.current_payloads:
+            test_url = target_url + payload
+            try:
+                resp = requests.get(test_url, timeout=10)
+                content = resp.text
 
-            # Simple regex checks for payload reflection or typical XSS triggers:
-            patterns = [
-                re.escape(self.current_payload),  # Exact payload reflection
-                r"(?i)<script>alert\(",            # common alert signature
-                r"(?i)onerror=",                  # common XSS attribute
-                r"(?i)onload=",                   # another common event
-                r"(?i)javascript:",               # javascript: in response
-                r"(?i)document\.cookie",          # cookie access attempts
-            ]
+                patterns = [
+                    re.escape(payload),
+                    r"(?i)<script>alert\(",
+                    r"(?i)onerror=",
+                    r"(?i)onload=",
+                    r"(?i)javascript:",
+                    r"(?i)document\.cookie",
+                ]
 
-            content = resp.text
+                matched = any(re.search(pattern, content) for pattern in patterns)
 
-            # Check patterns
-            for pattern in patterns:
-                if re.search(pattern, content):
-                    self.feedback.setStyleSheet("color: #00ff00;")
-                    self.feedback.setText("✅ Payload likely successful — reflection detected.")
-                    return
+                if matched:
+                    results.append(f"✅ Payload reflected: {payload[:40]}...")
+                else:
+                    if resp.status_code in (403, 406):
+                        results.append(f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}...")
+                    elif resp.status_code >= 500:
+                        results.append(f"⚠️ Server error (HTTP {resp.status_code}): {payload[:40]}...")
+                    else:
+                        results.append(f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}...")
 
-            # If no pattern matched, check HTTP status codes for possible blocking
-            if resp.status_code in (403, 406):
-                self.feedback.setStyleSheet("color: #ff5555;")
-                self.feedback.setText(f"❌ Payload blocked — HTTP {resp.status_code}.")
-            elif resp.status_code >= 500:
-                self.feedback.setStyleSheet("color: #ffbb55;")
-                self.feedback.setText(f"⚠️ Server error — HTTP {resp.status_code}.")
-            else:
-                self.feedback.setStyleSheet("color: #ffbb55;")
-                self.feedback.setText(f"⚠️ No clear reflection detected (HTTP {resp.status_code}).")
+            except requests.exceptions.Timeout:
+                results.append(f"❌ Timeout: {payload[:40]}...")
+            except requests.exceptions.RequestException as e:
+                results.append(f"❌ Request error: {e}")
 
-        except requests.exceptions.Timeout:
-            self.feedback.setStyleSheet("color: #ff5555;")
-            self.feedback.setText("❌ Request timed out.")
-        except requests.exceptions.RequestException as e:
-            self.feedback.setStyleSheet("color: #ff5555;")
-            self.feedback.setText(f"❌ Request error: {e}")
+        self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
+        self.feedback.setText("\n".join(results))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
-
