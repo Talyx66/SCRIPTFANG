@@ -1,3 +1,5 @@
+
+
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton
 from PyQt6.QtGui import QMovie, QFont
 from PyQt6.QtCore import Qt
@@ -13,16 +15,20 @@ class ScriptFangGUI(QWidget):
         # Load the GIF background
         self.bg_label = QLabel(self)
         gif_path = os.path.join("..", "assets", "dragonsscript.gif")
+        print("GIF path:", gif_path)
+        
         self.movie = QMovie(gif_path)
-
         if not self.movie.isValid():
             print("❌ GIF failed to load. Check path or file format.")
             return
 
-        self.bg_label.setMovie(self.movie)
         self.movie.setScaledSize(self.size())
-        self.movie.start()
+        self.bg_label.setMovie(self.movie)
         self.bg_label.setGeometry(0, 0, 1280, 720)
+        self.bg_label.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        self.movie.setParent(self)  # Prevent garbage collection
+        self.movie.start()
 
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
@@ -43,5 +49,3 @@ if __name__ == "__main__":
     gui = ScriptFangGUI()
     gui.show()
     sys.exit(app.exec())
-
-
