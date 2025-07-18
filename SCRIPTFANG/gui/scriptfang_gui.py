@@ -43,7 +43,7 @@ class ScriptFangGUI(QWidget):
         # Title
         self.title = QLabel("SCRIPTFANG", self)
         self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 45, QFont.Weight.Bold))
+        self.title.setFont(QFont("Courier", 55, QFont.Weight.Bold))
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 20, self.width(), 50)
 
