@@ -55,7 +55,7 @@ class ScriptFangGUI(QWidget):
         self.output.setGeometry(390, 440, 500, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
-            "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
+            "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 8px;"
         )
         self.output.setFont(QFont("Courier", 12))
         self.output.setText("// XSS Payload appears here\n")
