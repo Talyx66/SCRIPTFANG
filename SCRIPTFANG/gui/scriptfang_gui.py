@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (
-    QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit
+    QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit, QFileDialog
 )
 from PyQt6.QtGui import QMovie, QFont, QTextCursor
 from PyQt6.QtCore import Qt, QSize
@@ -169,6 +169,22 @@ class ScriptFangGUI(QWidget):
         )
         self.test_button.clicked.connect(self.test_payload)
 
+        # Export Payloads button next to Test Payload
+        export_btn_width = 140
+        export_btn_height = 40
+        export_btn_x = test_btn_x + test_btn_width + 15
+        self.export_button = QPushButton("Export Payload(s)", self)
+        self.export_button.setGeometry(
+            export_btn_x,
+            multi_btn_y,
+            export_btn_width,
+            export_btn_height
+        )
+        self.export_button.setStyleSheet(
+            "background-color: rgba(128,128,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
+        )
+        self.export_button.clicked.connect(self.export_payloads)
+
         # Footer label (GitHub + credit) at the bottom center
         footer_height = 25
         self.footer = QLabel("GitHub: github.com/Talyx66  |  Made by Talyx", self)
@@ -241,6 +257,16 @@ class ScriptFangGUI(QWidget):
             multi_btn_y,
             test_btn_width,
             test_btn_height
+        )
+
+        export_btn_width = 140
+        export_btn_height = 40
+        export_btn_x = test_btn_x + test_btn_width + 15
+        self.export_button.setGeometry(
+            export_btn_x,
+            multi_btn_y,
+            export_btn_width,
+            export_btn_height
         )
 
         footer_height = 25
@@ -338,8 +364,26 @@ class ScriptFangGUI(QWidget):
             except requests.exceptions.RequestException as e:
                 results.append(f"❌ Request error: {e}")
 
+        # Update feedback with all results joined by newlines
         self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
         self.feedback.setText("\n".join(results))
+
+    def export_payloads(self):
+        if not self.current_payloads:
+            self.feedback.setText("⚠️ No payloads to export.")
+            return
+
+        options = QFileDialog.Options()
+        filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
+        if filename:
+            try:
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write("\n\n".join(self.current_payloads))
+                self.feedback.setStyleSheet("color: #00ff00;")
+                self.feedback.setText(f"✅ Payloads exported to {filename}")
+            except Exception as e:
+                self.feedback.setStyleSheet("color: #ff5555;")
+                self.feedback.setText(f"❌ Failed to export: {e}")
 
 
 if __name__ == "__main__":
