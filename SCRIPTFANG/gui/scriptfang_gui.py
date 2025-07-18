@@ -62,7 +62,7 @@ class ScriptFangGUI(QWidget):
 
         # Footer credit label
         self.credit = QLabel("Made by Talyx · GitHub.com/Talyx66", self)
-        self.credit.setStyleSheet("color: #00ff00; background: transparent; font-size: 12px;")
+        self.credit.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
         self.credit.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.credit.setGeometry(0, 680, 1280, 20)
 
