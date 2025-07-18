@@ -147,10 +147,10 @@ class ScriptFangGUI(QWidget):
         multi_btn_y = second_row_y + btn_height + 25
         start_x = (self.width() - total_width) // 2
 
-        self.multi_button = QPushButton("Generate Multiple Payloads", self)
+        self.multi_button = QPushButton("Generate Mult- Payloads", self)
         self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
         self.multi_button.setStyleSheet(
-            "background-color: rgba(0,100,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
+            "background-color: rgba(0,100,0,0.7); color: white; font-size: 14px; border-radius: 8px;"
         )
         self.multi_button.clicked.connect(self.generate_multiple_payloads)
 
