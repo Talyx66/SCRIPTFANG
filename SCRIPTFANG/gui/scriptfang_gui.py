@@ -10,7 +10,7 @@ import random
 class ScriptFangGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ScriptFang 🐉")
+        self.setWindowTitle("SCRIPTFANG")
         self.setFixedSize(1280, 720)
 
         # Calculate GIF path one level up to assets, with new name "dragons.gif"
@@ -39,7 +39,7 @@ class ScriptFangGUI(QWidget):
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
         self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 36, QFont.Weight.Bold))
+        self.title.setFont(QFont("Courier", 50, QFont.Weight.Bold))
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 30, 1280, 60)
 
