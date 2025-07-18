@@ -422,10 +422,11 @@ class ScriptFangGUI(QWidget):
             return
 
         if not payloads:
-            self.feedback.setText("⚠
+            self.feedback.setText("⚠ No payloads found for fuzzing.")
+            return
 
                                   
-   if __name__ == "__main__":
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
     gui.show()
