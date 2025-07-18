@@ -19,7 +19,7 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
 # Installation
 1. Clone the Repository
-```bash
+``bash
 Copy
 Edit
 git clone https://github.com/Talyx66/ScriptFang.git
@@ -33,15 +33,16 @@ Copy
 Edit
 pip install -r requirements.txt
 Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt.
-
-# Usage
+```
+## Usage.
 1.) Run the tool:
 
 ```bash
 Copy
 Edit
 python gui.py
-Steps:
+```
+## Steps:
 
 2. Enter your target URL (e.g., https://victim.com/search?q=).
 
