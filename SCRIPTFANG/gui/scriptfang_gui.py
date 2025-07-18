@@ -5,7 +5,6 @@ from PyQt6.QtGui import QMovie, QFont, QTextCursor
 from PyQt6.QtCore import Qt, QSize
 import sys
 import os
-import random
 
 class ScriptFangGUI(QWidget):
     def __init__(self):
@@ -13,7 +12,7 @@ class ScriptFangGUI(QWidget):
         self.setWindowTitle("SCRIPTFANG")
         self.setFixedSize(1280, 720)
 
-        # Calculate GIF path one level up to assets, with new name "dragons.gif"
+        # Calculate GIF path
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         gif_path = os.path.join(base_dir, "assets", "dragons.gif")
         print("Resolved GIF path:", gif_path)
@@ -22,7 +21,7 @@ class ScriptFangGUI(QWidget):
         self.bg_label = QLabel(self)
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         self.bg_label.setStyleSheet("background: black;")
-        self.bg_label.lower()  # Keep it behind all widgets
+        self.bg_label.lower()
 
         self.movie = QMovie(gif_path)
         if not self.movie.isValid():
@@ -36,10 +35,10 @@ class ScriptFangGUI(QWidget):
             self.bg_label.setMovie(self.movie)
             self.movie.start()
 
-        # Title label
+        # Title
         self.title = QLabel("SCRIPTFANG", self)
         self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 50, QFont.Weight.Bold))
+        self.title.setFont(QFont("Courier", 55, QFont.Weight.Bold))
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 30, 1280, 60)
 
@@ -51,9 +50,9 @@ class ScriptFangGUI(QWidget):
         )
         self.button.clicked.connect(self.generate_payload)
 
-        # Payload output box (lowered)
+        # Payload output box
         self.output = QTextEdit(self)
-        self.output.setGeometry(390, 430, 500, 120)
+        self.output.setGeometry(390, 300, 500, 120)
         self.output.setReadOnly(True)
         self.output.setStyleSheet(
             "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
@@ -61,37 +60,20 @@ class ScriptFangGUI(QWidget):
         self.output.setFont(QFont("Courier", 12))
         self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
 
+        # Footer credit label
+        self.credit = QLabel("Made by Talyx · GitHub: Talyx66", self)
+        self.credit.setStyleSheet("color: #00ff00; background: transparent; font-size: 12px;")
+        self.credit.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.credit.setGeometry(0, 680, 1280, 20)
+
     def resizeEvent(self, event):
-        # Keep GIF background scaled to window size
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         if self.movie and self.movie.isValid():
             self.movie.setScaledSize(QSize(self.width(), self.height()))
         super().resizeEvent(event)
 
     def generate_payload(self):
-        # Load from ../payloads/xss.txt
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        payload_file = os.path.join(base_dir, "payloads", "xss.txt")
-
-        payload = ""
-        try:
-            if os.path.exists(payload_file):
-                with open(payload_file, "r", encoding="utf-8") as f:
-                    payloads = [line.strip() for line in f if line.strip()]
-                if payloads:
-                    payload = random.choice(payloads)
-        except Exception as e:
-            print(f"❌ Error loading payloads: {e}")
-
-        # Fallback
-        if not payload:
-            payload = random.choice([
-                "<script>alert(1)</script>",
-                "<img src=x onerror=alert(document.domain)>",
-                "<svg/onload=alert(1337)>",
-                "<iframe srcdoc='<script>alert(0xBADF00D)</script>'>",
-            ])
-
+        payload = "<script>alert('ScriptFang 🔥 Payload!')</script>"
         self.output.setPlainText(payload)
         cursor = self.output.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.Start)
