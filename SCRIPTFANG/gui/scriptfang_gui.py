@@ -13,7 +13,7 @@ class ScriptFangGUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("ScriptFang")
-        self.setFixedSize(1280, 780)  # Height increased for buttons
+        self.setFixedSize(1280, 780)  # Added height for extra buttons
 
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.payload_dir = os.path.join(base_dir, "tools", "payloads")
@@ -67,10 +67,9 @@ class ScriptFangGUI(QWidget):
 
         # Feedback label
         self.feedback = QLabel("", self)
-        self.feedback.setGeometry(390, 420, 660, 60)
+        self.feedback.setGeometry(390, 420, 660, 30)
         self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
         self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.feedback.setWordWrap(True)
 
         # GitHub + credit label
         self.footer = QLabel("GitHub: github.com/Talyx66  |  Made by Talyx", self)
@@ -79,53 +78,80 @@ class ScriptFangGUI(QWidget):
         self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.footer.setGeometry(0, 740, 1280, 30)
 
-        # Buttons config: (label, file_name, x_pos)
+        # Buttons config: (label, file_name)
         self.payload_buttons = [
-            ("XSS Payload", "xss.txt", 390),
-            ("WAF Bypass", "waf_bypass.txt", 590),
-            ("Angular Payload", "angular.txt", 790),
-            ("href Payload", "href.txt", 990),
-            ("Script Breakout", "script_breakout.txt", 390),
-            ("ScriptSneaky", "scriptsneaky.txt", 590),
-            ("Body Payload", "body.txt", 790),
-            ("Div Payload", "div.txt", 990),
-            ("Cloudflare Bypass", "cloudflare.txt", 1190)
+            ("XSS Payload", "xss.txt"),
+            ("WAF Bypass", "waf_bypass.txt"),
+            ("Angular Payload", "angular.txt"),
+            ("href Payload", "href.txt"),
+            ("Script Breakout", "script_breakout.txt"),
+            ("ScriptSneaky", "scriptsneaky.txt"),
+            ("Body Payload", "body.txt"),
+            ("Div Payload", "div.txt"),
+            ("Cloudflare Bypass", "cloudflare.txt")
         ]
 
         self.buttons = {}
-        y_pos = 170
-        # First row (first 4 buttons)
-        for label, filename, x_pos in self.payload_buttons[:4]:
+        button_width = 150
+        button_height = 35
+        spacing = 20
+        total_buttons_first_row = 4
+        total_buttons_second_row = len(self.payload_buttons) - total_buttons_first_row
+
+        # Calculate starting x to center first row
+        total_width_first_row = total_buttons_first_row * button_width + (total_buttons_first_row - 1) * spacing
+        start_x_first_row = (self.width() - total_width_first_row) // 2
+        y_pos_first_row = 450
+
+        # First row buttons
+        for i, (label, filename) in enumerate(self.payload_buttons[:total_buttons_first_row]):
+            x_pos = start_x_first_row + i * (button_width + spacing)
             btn = QPushButton(label, self)
-            btn.setGeometry(x_pos, y_pos, 180, 40)
+            btn.setGeometry(x_pos, y_pos_first_row, button_width, button_height)
             btn.setStyleSheet(
-                "background-color: rgba(0,128,0,0.7); color: white; font-size: 14px; border-radius: 8px;"
+                "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 7px;"
             )
             btn.clicked.connect(lambda _, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
-        # Second row (remaining buttons)
-        y_pos = 220
-        for label, filename, x_pos in self.payload_buttons[4:]:
+        # Calculate starting x to center second row
+        total_width_second_row = total_buttons_second_row * button_width + (total_buttons_second_row - 1) * spacing
+        start_x_second_row = (self.width() - total_width_second_row) // 2
+        y_pos_second_row = 495
+
+        # Second row buttons
+        for i, (label, filename) in enumerate(self.payload_buttons[total_buttons_first_row:]):
+            x_pos = start_x_second_row + i * (button_width + spacing)
             btn = QPushButton(label, self)
-            btn.setGeometry(x_pos, y_pos, 180, 40)
+            btn.setGeometry(x_pos, y_pos_second_row, button_width, button_height)
             btn.setStyleSheet(
-                "background-color: rgba(0,128,0,0.7); color: white; font-size: 14px; border-radius: 8px;"
+                "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 7px;"
             )
             btn.clicked.connect(lambda _, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
         # Generate Multiple Payloads button
         self.multi_button = QPushButton("Generate Multiple Payloads", self)
-        self.multi_button.setGeometry(390, 540, 250, 50)
+        multi_button_width = 220
+        multi_button_height = 45
+
+        # Test Payload button
+        self.test_button = QPushButton("Test Payload", self)
+        test_button_width = 180
+        test_button_height = 45
+
+        # Center multi and test buttons below the payload buttons
+        total_width_bottom = multi_button_width + 30 + test_button_width
+        start_x_bottom = (self.width() - total_width_bottom) // 2
+        y_pos_bottom = 550
+
+        self.multi_button.setGeometry(start_x_bottom, y_pos_bottom, multi_button_width, multi_button_height)
         self.multi_button.setStyleSheet(
             "background-color: rgba(0,100,0,0.7); color: white; font-size: 16px; border-radius: 8px;"
         )
         self.multi_button.clicked.connect(self.generate_multiple_payloads)
 
-        # Test Payload button
-        self.test_button = QPushButton("Test Payload", self)
-        self.test_button.setGeometry(670, 540, 180, 50)
+        self.test_button.setGeometry(start_x_bottom + multi_button_width + 30, y_pos_bottom, test_button_width, test_button_height)
         self.test_button.setStyleSheet(
             "background-color: rgba(128,0,0,0.7); color: white; font-size: 16px; border-radius: 8px;"
         )
@@ -163,7 +189,6 @@ class ScriptFangGUI(QWidget):
             self.feedback.setText("")
 
     def generate_multiple_payloads(self):
-        # Load multiple random payloads from last selected category or default XSS.txt
         try:
             path = os.path.join(self.payload_dir, "xss.txt")
             with open(path, 'r', encoding='utf-8') as f:
@@ -198,7 +223,6 @@ class ScriptFangGUI(QWidget):
         self.repaint()  # Force UI update
 
         results = []
-        colored_lines = []
 
         for payload in self.current_payloads:
             test_url = target_url + payload
@@ -206,7 +230,6 @@ class ScriptFangGUI(QWidget):
                 resp = requests.get(test_url, timeout=10)
                 content = resp.text
 
-                # Patterns to detect payload reflection or script execution evidence
                 patterns = [
                     re.escape(payload),
                     r"(?i)<script>alert\(",
@@ -220,7 +243,6 @@ class ScriptFangGUI(QWidget):
 
                 if matched:
                     results.append(f"✅ Payload reflected: {payload[:40]}...")
-                    colored_lines.append(f'<span style="color: #00ff00;">{payload}</span>')
                 else:
                     if resp.status_code in (403, 406):
                         results.append(f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}...")
@@ -228,29 +250,14 @@ class ScriptFangGUI(QWidget):
                         results.append(f"⚠️ Server error (HTTP {resp.status_code}): {payload[:40]}...")
                     else:
                         results.append(f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}...")
-                    colored_lines.append(f'<span style="color: #ff5555;">{payload}</span>')
 
             except requests.exceptions.Timeout:
                 results.append(f"❌ Timeout: {payload[:40]}...")
-                colored_lines.append(f'<span style="color: #ff5555;">{payload}</span>')
             except requests.exceptions.RequestException as e:
                 results.append(f"❌ Request error: {e}")
-                colored_lines.append(f'<span style="color: #ff5555;">{payload}</span>')
 
-        # Update QTextEdit with colored payloads (HTML)
-        html_text = "<br><br>".join(colored_lines)
-        self.output.setHtml(html_text)
-
-        # Feedback label color green if any success, yellow otherwise
         self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
         self.feedback.setText("\n".join(results))
-
-    def resizeEvent(self, event):
-        # Resize GIF background with window
-        self.bg_label.setGeometry(0, 0, self.width(), self.height())
-        if self.movie and self.movie.isValid():
-            self.movie.setScaledSize(QSize(self.width(), self.height()))
-        super().resizeEvent(event)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
