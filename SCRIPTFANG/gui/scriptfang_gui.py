@@ -1,9 +1,9 @@
 
 
 
-from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit
-from PyQt6.QtGui import QMovie, QFont, QTextCursor
-from PyQt6.QtCore import Qt, QSize
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QTextEdit
+from PyQt5.QtGui import QMovie, QFont, QTextCursor
+from PyQt5.QtCore import Qt, QSize
 import sys
 import os
 
@@ -30,17 +30,17 @@ class ScriptFangGUI(QWidget):
             self.bg_label.setText("Failed to load GIF")
             self.bg_label.setStyleSheet("color: red; background: black; font-size: 24px;")
         else:
-            self.movie.setCacheMode(QMovie.CacheMode.CacheAll)
+            self.movie.setCacheMode(QMovie.CacheAll)
             self.movie.setSpeed(100)
-            self.movie.setScaledSize(QSize(self.width(), self.height()))
+            self.movie.setScaledSize(self.size())
             self.bg_label.setMovie(self.movie)
             self.movie.start()
 
         # Title label
         self.title = QLabel("SCRIPTFANG", self)
         self.title.setStyleSheet("color: #00ff00; background: transparent;")
-        self.title.setFont(QFont("Courier", 36, QFont.Weight.Bold))
-        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.title.setFont(QFont("Courier", 36, QFont.Bold))
+        self.title.setAlignment(Qt.AlignCenter)
         self.title.setGeometry(0, 30, 1280, 60)
 
         # Generate Button
@@ -62,22 +62,20 @@ class ScriptFangGUI(QWidget):
         self.output.setText("// XSS Payload will appear here\n// Created by the dragon's flame")
 
     def resizeEvent(self, event):
-        # Keep GIF background scaled to window size
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         if self.movie and self.movie.isValid():
-            self.movie.setScaledSize(QSize(self.width(), self.height()))
+            self.movie.setScaledSize(self.size())
         super().resizeEvent(event)
 
     def generate_payload(self):
-        # Example payload, replace with your real logic
         payload = "<script>alert('ScriptFang 🔥 Payload!')</script>"
         self.output.setPlainText(payload)
         cursor = self.output.textCursor()
-        cursor.movePosition(QTextCursor.MoveOperation.Start)
+        cursor.movePosition(QTextCursor.Start)
         self.output.setTextCursor(cursor)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
     gui.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())
