@@ -167,49 +167,43 @@ class ScriptFangGUI(QWidget):
             self.buttons[label] = btn
 
         # Group the four buttons below payload buttons and center them as a block
-        multi_btn_width, multi_btn_height = 140, 40
-        test_btn_width, test_btn_height = 140, 40
-        export_btn_width, export_btn_height = 140, 40
-        btn_spacing = 15
+btn_width = 140
+btn_height = 40
+btn_spacing = 15
+btn_labels = ["multi_button", "test_button", "export_button", "fuzz_button"]
 
-        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 2
-        multi_btn_y = second_row_y + btn_height + 25
-        start_x = (self.width() - total_width) // 2
+total_width = btn_width * 4 + btn_spacing * 3  # 4 buttons, 3 gaps
+multi_btn_y = second_row_y + btn_height + 25
+start_x = (self.width() - total_width) // 2
 
-        self.multi_button = QPushButton("Generate Mult- Payloads", self)
-        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
-        self.multi_button.setStyleSheet(
-            "background-color: rgba(0,100,0,0.7); color: white; font-size: 12px; border-radius: 10px;"
-        )
-        self.multi_button.clicked.connect(self.generate_multiple_payloads)
+self.multi_button = QPushButton("Generate Mult- Payloads", self)
+self.multi_button.setGeometry(start_x, multi_btn_y, btn_width, btn_height)
+self.multi_button.setStyleSheet(
+    "background-color: rgba(0,100,0,0.7); color: white; font-size: 12px; border-radius: 10px;"
+)
+self.multi_button.clicked.connect(self.generate_multiple_payloads)
 
-        self.test_button = QPushButton("Test Payload", self)
-        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
-        self.test_button.setStyleSheet(
-            "background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
-        )
-        self.test_button.clicked.connect(self.test_payload)
+self.test_button = QPushButton("Test Payload", self)
+self.test_button.setGeometry(start_x + (btn_width + btn_spacing) * 1, multi_btn_y, btn_width, btn_height)
+self.test_button.setStyleSheet(
+    "background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
+)
+self.test_button.clicked.connect(self.test_payload)
 
-        self.export_button = QPushButton("Export Payload(s)", self)
-        self.export_button.setGeometry(
-            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
-            multi_btn_y,
-            export_btn_width,
-            export_btn_height
-        )
-        self.export_button.setStyleSheet(
-            "background-color: rgba(128,128,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
-        )
-        self.export_button.clicked.connect(self.export_payloads)
+self.export_button = QPushButton("Export Payload(s)", self)
+self.export_button.setGeometry(start_x + (btn_width + btn_spacing) * 2, multi_btn_y, btn_width, btn_height)
+self.export_button.setStyleSheet(
+    "background-color: rgba(128,128,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
+)
+self.export_button.clicked.connect(self.export_payloads)
 
-        # --- ADD FUZZ BUTTON HERE ---
-        fuzz_btn_x = start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing
-        self.fuzz_button = QPushButton("Fuzz Target", self)
-        self.fuzz_button.setGeometry(fuzz_btn_x, multi_btn_y, 140, 40)
-        self.fuzz_button.setStyleSheet(
-            "background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;"
-        )
-        self.fuzz_button.clicked.connect(self.start_fuzzing)
+self.fuzz_button = QPushButton("Fuzz Target", self)
+self.fuzz_button.setGeometry(start_x + (btn_width + btn_spacing) * 3, multi_btn_y, btn_width, btn_height)
+self.fuzz_button.setStyleSheet(
+    "background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;"
+)
+self.fuzz_button.clicked.connect(self.start_fuzzing)
+
 
         # Footer label (GitHub + credit) at the bottom center
         footer_height = 26
