@@ -42,8 +42,6 @@ python3 gui.py
 
 ![screenshot 1](SCRIPTFANG/assets/vbox1.png)
 
-![screenshot 2](SCRIPTFANG/assets/vbox2.png)
-
 ### Preview
 
 ![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
