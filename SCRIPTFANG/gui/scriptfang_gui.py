@@ -1,164 +1,431 @@
+scoot the "Generate mult-payloads, Test payload, Export payload(s), & Fuzz Target" Buttons over a smidge to the left to center it with the rest of my gui. Do it for me. Here is my GUI. Do not change anything else just that. 
+
+from PyQt6.QtWidgets import (
+    QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit, QFileDialog
+)
+from PyQt6.QtGui import QMovie, QFont, QTextCursor
+from PyQt6.QtCore import Qt, QSize, QThread, pyqtSignal  # <-- added here
 import sys
 import os
 import random
-import time
+import re
 import requests
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QLabel, QTextEdit, QPushButton,
-                             QVBoxLayout, QWidget, QComboBox, QFileDialog, QLineEdit)
-from PyQt6.QtGui import QMovie, QFont, QColor
-from PyQt6.QtCore import Qt
-from bs4 import BeautifulSoup
 
-class ScriptFangGUI(QMainWindow):
+
+# Fuzzer thread to avoid freezing GUI
+class FuzzThread(QThread):
+    update_signal = pyqtSignal(str)
+    finished_signal = pyqtSignal()
+
+    def __init__(self, url, payloads):
+        super().__init__()
+        self.url = url
+        self.payloads = payloads
+
+    def run(self):
+        for payload in self.payloads:
+            test_url = self.url + payload
+            try:
+                resp = requests.get(test_url, timeout=5)
+                if payload in resp.text:
+                    result = f"✅ Reflected: {payload[:40]}..."
+                elif resp.status_code in (403, 406):
+                    result = f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}..."
+                else:
+                    result = f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}..."
+            except Exception as e:
+                result = f"❌ Error: {str(e)}"
+            self.update_signal.emit(result)
+        self.finished_signal.emit()
+
+
+class ScriptFangGUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ScriptFang - XSS Payload Generator & Fuzzer")
-        self.setGeometry(100, 100, 850, 600)
-        self.setStyleSheet("background-color: black; color: white;")
+        self.setWindowTitle("SCRIPTFANG")
+        self.setFixedSize(1024, 600)  # Resized window
 
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.payload_dir = os.path.join(base_dir, "tools", "payloads")
 
+        gif_path = os.path.join(base_dir, "assets", "dragons.gif")
+        print("Resolved GIF path:", gif_path)
+
+        # Background GIF label
         self.bg_label = QLabel(self)
-        self.bg_movie = QMovie("assets/dragonss.gif")
-        self.bg_label.setMovie(self.bg_movie)
-        self.bg_movie.start()
+        self.bg_label.setGeometry(0, 0, self.width(), self.height())
+        self.bg_label.setStyleSheet("background: black;")
+        self.bg_label.lower()
 
-        self.output_area = QTextEdit(self)
-        self.output_area.setReadOnly(True)
-        self.output_area.setStyleSheet("background-color: black; color: #00FF00; font-family: Consolas; font-size: 13px;")
-        self.output_area.setFont(QFont("Consolas", 12))
+        self.movie = QMovie(gif_path)
+        if not self.movie.isValid():
+            print(f"❌ Failed to load GIF from {gif_path}")
+            self.bg_label.setText("Failed to load GIF")
+            self.bg_label.setStyleSheet("color: red; background: black; font-size: 24px;")
+        else:
+            self.movie.setCacheMode(QMovie.CacheMode.CacheAll)
+            self.movie.setSpeed(100)
+            self.movie.setScaledSize(QSize(self.width(), self.height()))
+            self.bg_label.setMovie(self.movie)
+            self.movie.start()
 
-        self.category_dropdown = QComboBox(self)
-        self.category_dropdown.setStyleSheet("background-color: #222; color: white; font-size: 12px;")
-        self.load_categories()
+        # Title
+        self.title = QLabel("SCRIPTFANG", self)
+        self.title.setStyleSheet("color: #00ff00; background: transparent;")
+        self.title.setFont(QFont("Courier", 55, QFont.Weight.Bold))
+        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.title.setGeometry(0, 20, self.width(), 50)
 
-        self.target_input = QLineEdit(self)
-        self.target_input.setPlaceholderText("Enter target URL (e.g., https://site.com?q=)")
-        self.target_input.setStyleSheet("background-color: #222; color: white; padding: 5px;")
+        # Target URL input - centered horizontally
+        self.url_input = QLineEdit(self)
+        self.url_input.setPlaceholderText("Enter target URL (e.g. https://victim.com/search?q=)")
+        input_width = 600
+        input_height = 35
+        self.url_input.setGeometry(
+            (self.width() - input_width) // 2,
+            90,
+            input_width,
+            input_height
+        )
+        self.url_input.setStyleSheet(
+            "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
+        )
+        self.url_input.setFont(QFont("Courier", 12))
 
-        self.multi_payload_btn = QPushButton("Generate Mult- Payloads")
-        self.multi_payload_btn.clicked.connect(self.generate_multiple_payloads)
-        self.multi_payload_btn.setFixedWidth(180)
+        # Payload output box - centered horizontally
+        output_width = 700
+        output_height = 110
+        self.output = QTextEdit(self)
+        self.output.setGeometry(
+            (self.width() - output_width) // 2,
+            150,
+            output_width,
+            output_height
+        )
+        self.output.setReadOnly(True)
+        self.output.setStyleSheet(
+            "background-color: rgba(0, 0, 0, 0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
+        )
+        self.output.setFont(QFont("Courier", 12))
+        self.output.setText("// XSS Payload will appear here\n")
 
-        self.test_button = QPushButton("Test Payload")
+        # Feedback label - centered horizontally
+        self.feedback = QLabel("", self)
+        self.feedback.setGeometry(
+            0,
+            270,
+            self.width(),
+            30
+        )
+        self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
+        self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Buttons config: (label, file_name)
+        self.payload_buttons = [
+            ("XSS Payload", "xss.txt"),
+            ("WAF Bypass", "waf_bypass.txt"),
+            ("Angular Payload", "angular.txt"),
+            ("href Payload", "href.txt"),
+            ("Script Breakout", "script_breakout.txt"),
+            ("ScriptSneaky", "scriptsneaky.txt"),
+            ("Body Payload", "body.txt"),
+            ("Div Payload", "div.txt"),
+            ("Cloudflare Bypass", "cloudflare.txt")
+        ]
+
+        self.buttons = {}
+        btn_width = 140
+        btn_height = 35
+        spacing = 15
+        buttons_per_row = 4
+
+        # Starting positions for button grid
+        start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
+        start_y = 320
+
+        # Create first row buttons
+        for idx, (label, filename) in enumerate(self.payload_buttons[:buttons_per_row]):
+            x = start_x + idx * (btn_width + spacing)
+            btn = QPushButton(label, self)
+            btn.setGeometry(x, start_y, btn_width, btn_height)
+            btn.setStyleSheet(
+                "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;"
+            )
+            btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
+            self.buttons[label] = btn
+
+        # Second row buttons
+        second_row_y = start_y + btn_height + 12
+        for idx, (label, filename) in enumerate(self.payload_buttons[buttons_per_row:buttons_per_row*2]):
+            x = start_x + idx * (btn_width + spacing)
+            btn = QPushButton(label, self)
+            btn.setGeometry(x, second_row_y, btn_width, btn_height)
+            btn.setStyleSheet(
+                "background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;"
+            )
+            btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
+            self.buttons[label] = btn
+
+        # Group the three buttons below payload buttons and center them as a block
+        multi_btn_width, multi_btn_height = 140, 40
+        test_btn_width, test_btn_height = 140, 40
+        export_btn_width, export_btn_height = 140, 40
+        btn_spacing = 15
+
+        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 2
+        multi_btn_y = second_row_y + btn_height + 25
+        start_x = (self.width() - total_width) // 2
+
+        self.multi_button = QPushButton("Generate Mult- Payloads", self)
+        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
+        self.multi_button.setStyleSheet(
+            "background-color: rgba(0,100,0,0.7); color: white; font-size: 12px; border-radius: 8px;"
+        )
+        self.multi_button.clicked.connect(self.generate_multiple_payloads)
+
+        self.test_button = QPushButton("Test Payload", self)
+        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
+        self.test_button.setStyleSheet(
+            "background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
+        )
         self.test_button.clicked.connect(self.test_payload)
-        self.test_button.setFixedWidth(140)
 
-        self.export_button = QPushButton("Export Payload(s)")
+        self.export_button = QPushButton("Export Payload(s)", self)
+        self.export_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
+            multi_btn_y,
+            export_btn_width,
+            export_btn_height
+        )
+        self.export_button.setStyleSheet(
+            "background-color: rgba(128,128,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
+        )
         self.export_button.clicked.connect(self.export_payloads)
-        self.export_button.setFixedWidth(160)
 
-        self.fuzz_button = QPushButton("Fuzz Target")
-        self.fuzz_button.clicked.connect(self.fuzz_target)
-        self.fuzz_button.setFixedWidth(140)
+        # --- ADD FUZZ BUTTON HERE ---
+        fuzz_btn_x = start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing
+        self.fuzz_button = QPushButton("Fuzz Target", self)
+        self.fuzz_button.setGeometry(fuzz_btn_x, multi_btn_y, 140, 40)
+        self.fuzz_button.setStyleSheet(
+            "background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;"
+        )
+        self.fuzz_button.clicked.connect(self.start_fuzzing)
 
-        self.multi_payload_btn.setStyleSheet("background-color: #2f2f2f; color: white;")
-        self.test_button.setStyleSheet("background-color: #3f3f3f; color: white;")
-        self.export_button.setStyleSheet("background-color: #4f4f4f; color: white;")
-        self.fuzz_button.setStyleSheet("background-color: #5f5f5f; color: white;")
+        # Footer label (GitHub + credit) at the bottom center
+        footer_height = 26
+        self.footer = QLabel("GitHub: Github.com/Talyx66  |  Made by Talyx", self)
+        self.footer.setStyleSheet("color: #00ff00; background: transparent;")
+        self.footer.setFont(QFont("Courier", 13))
+        self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
 
-        self.multi_payload_btn.setParent(self)
-        self.test_button.setParent(self)
-        self.export_button.setParent(self)
-        self.fuzz_button.setParent(self)
+        # Store current payloads
+        self.current_payloads = []
 
     def resizeEvent(self, event):
-        self.bg_label.resize(self.width(), self.height())
-        self.output_area.resize(self.width() - 80, self.height() - 300)
-        self.output_area.move(40, 30)
-        self.category_dropdown.resize(240, 30)
-        self.category_dropdown.move((self.width() - self.category_dropdown.width()) // 2, self.height() - 240)
-        self.target_input.resize(self.width() - 160, 30)
-        self.target_input.move(80, self.height() - 200)
+        self.bg_label.setGeometry(0, 0, self.width(), self.height())
+        if self.movie and self.movie.isValid():
+            self.movie.setScaledSize(QSize(self.width(), self.height()))
+        # Re-center input, output, feedback, buttons, footer on resize
+        input_width = 600
+        output_width = 700
+        btn_width = 140
+        btn_height = 35
+        spacing = 15
+        buttons_per_row = 4
 
-        btn_spacing = 12
-        multi_btn_width = self.multi_payload_btn.width()
-        test_btn_width = self.test_button.width()
-        export_btn_width = self.export_button.width()
-        fuzz_btn_width = self.fuzz_button.width()
+        self.url_input.setGeometry(
+            (self.width() - input_width) // 2,
+            90,
+            input_width,
+            35
+        )
+        self.output.setGeometry(
+            (self.width() - output_width) // 2,
+            150,
+            output_width,
+            110
+        )
+        self.feedback.setGeometry(
+            0,
+            270,
+            self.width(),
+            30
+        )
 
-        total_width = multi_btn_width + test_btn_width + export_btn_width + fuzz_btn_width + btn_spacing * 3
+        start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
+        start_y = 320
+
+        for idx, label in enumerate(list(self.buttons.keys())[:buttons_per_row]):
+            x = start_x + idx * (btn_width + spacing)
+            self.buttons[label].setGeometry(x, start_y, btn_width, btn_height)
+
+        second_row_y = start_y + btn_height + 12
+        for idx, label in enumerate(list(self.buttons.keys())[buttons_per_row:buttons_per_row*2]):
+            x = start_x + idx * (btn_width + spacing)
+            self.buttons[label].setGeometry(x, second_row_y, btn_width, btn_height)
+
+        multi_btn_width, multi_btn_height = 140, 40
+        test_btn_width, test_btn_height = 140, 40
+        export_btn_width, export_btn_height = 140, 40
+        btn_spacing = 15
+
+        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 3  # added one more spacing for fuzz button
+        multi_btn_y = second_row_y + btn_height + 25
         start_x = (self.width() - total_width) // 2
-        y = self.height() - 130
 
-        self.multi_payload_btn.move(start_x, y)
-        self.test_button.move(start_x + multi_btn_width + btn_spacing, y)
-        self.export_button.move(start_x + multi_btn_width + test_btn_width + btn_spacing * 2, y)
-        self.fuzz_button.move(start_x + multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 3, y)
+        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
+        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
+        self.export_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
+            multi_btn_y,
+            export_btn_width,
+            export_btn_height
+        )
+        self.fuzz_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing,
+            multi_btn_y,
+            140,
+            40
+        )
 
-    def load_categories(self):
-        payload_path = os.path.join("tools", "payloads")
-        if os.path.exists(payload_path):
-            for file in os.listdir(payload_path):
-                if file.endswith(".txt"):
-                    self.category_dropdown.addItem(file)
+        footer_height = 25
+        self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
+
+        super().resizeEvent(event)
+
+    def generate_payload_from_file(self, filename):
+        try:
+            path = os.path.join(self.payload_dir, filename)
+            with open(path, 'r', encoding='utf-8') as f:
+                payloads = [line.strip() for line in f if line.strip()]
+            if not payloads:
+                self.output.setPlainText(f"// No payloads found in {filename}.")
+                self.current_payloads = []
+                self.feedback.setText("")
+                return
+            payload = random.choice(payloads)
+            self.current_payloads = [payload]
+            self.output.setPlainText(payload)
+            cursor = self.output.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.Start)
+            self.output.setTextCursor(cursor)
+            self.feedback.setText("")
+        except Exception as e:
+            self.output.setPlainText(f"⚠️ Error loading {filename}: {e}")
+            self.current_payloads = []
+            self.feedback.setText("")
 
     def generate_multiple_payloads(self):
-        payload_path = os.path.join("tools", "payloads")
-        all_payloads = []
-        for file in os.listdir(payload_path):
-            if file.endswith(".txt"):
-                with open(os.path.join(payload_path, file), "r", encoding="utf-8") as f:
-                    all_payloads.extend(f.read().splitlines())
-        random.shuffle(all_payloads)
-        self.output_area.clear()
-        for payload in all_payloads[:50]:
-            self.output_area.append(payload)
-
-    def export_payloads(self):
-        file_path, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "payloads.txt", "Text Files (*.txt)")
-        if file_path:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(self.output_area.toPlainText())
+        try:
+            path = os.path.join(self.payload_dir, "xss.txt")
+            with open(path, 'r', encoding='utf-8') as f:
+                payloads = [line.strip() for line in f if line.strip()]
+            if not payloads:
+                self.output.setPlainText("// No payloads found in xss.txt.")
+                self.current_payloads = []
+                self.feedback.setText("")
+                return
+            selected = random.sample(payloads, min(5, len(payloads)))
+            self.current_payloads = selected
+            self.output.setPlainText("\n\n".join(selected))
+            cursor = self.output.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.Start)
+            self.output.setTextCursor(cursor)
+            self.feedback.setText("")
+        except Exception as e:
+            self.output.setPlainText(f"⚠️ Error loading xss.txt: {e}")
+            self.current_payloads = []
+            self.feedback.setText("")
 
     def test_payload(self):
-        url = self.target_input.text()
-        payload = self.output_area.toPlainText()
-
-        if not url or not payload:
-            self.output_area.append("❌ Missing target URL or payload.")
+        target_url = self.url_input.text().strip()
+        if not target_url:
+            self.feedback.setText("⚠️ Enter a valid target URL first.")
+            return
+        if not self.current_payloads:
+            self.feedback.setText("⚠️ Generate payload(s) first.")
             return
 
-        try:
-            test_url = url + payload
-            response = requests.get(test_url, timeout=6)
-            soup = BeautifulSoup(response.text, "html.parser")
+        self.feedback.setText("⏳ Testing payload(s) on target...")
+        self.repaint()  # Force UI update
 
-            if payload in response.text:
-                self.output_area.append("✅ Payload reflected in response!")
-            else:
-                self.output_area.append("❌ Payload not reflected.")
-        except Exception as e:
-            self.output_area.append(f"❌ Error testing payload: {e}")
+        results = []
 
-    def fuzz_target(self):
-        url = self.target_input.text()
-        if not url:
-            self.output_area.append("❌ No target URL provided for fuzzing.")
-            return
-
-        payload_path = os.path.join("tools", "payloads")
-        all_payloads = []
-        for file in os.listdir(payload_path):
-            if file.endswith(".txt"):
-                with open(os.path.join(payload_path, file), "r", encoding="utf-8") as f:
-                    all_payloads.extend(f.read().splitlines())
-
-        self.output_area.append(f"🔍 Fuzzing {url} with {len(all_payloads)} payloads...")
-        for payload in all_payloads:
-            test_url = url + payload
+        for payload in self.current_payloads:
+            test_url = target_url + payload
             try:
-                response = requests.get(test_url, timeout=6)
-                if payload in response.text:
-                    self.output_area.append(f"✅ Reflected: {payload}")
-                elif response.status_code == 403:
-                    self.output_area.append(f"🚫 Blocked (403): {payload}")
-                else:
-                    self.output_area.append(f"❌ Not reflected: {payload}")
-            except Exception as e:
-                self.output_area.append(f"⚠️ Error with payload: {payload} | {e}")
+                resp = requests.get(test_url, timeout=10)
+                content = resp.text
 
+                patterns = [
+                    re.escape(payload),
+                    r"(?i)<script>alert\(",
+                    r"(?i)onerror=",
+                    r"(?i)onload=",
+                    r"(?i)javascript:",
+                    r"(?i)document\.cookie",
+                ]
+
+                matched = any(re.search(pattern, content) for pattern in patterns)
+
+                if matched:
+                    results.append(f"✅ Payload reflected: {payload[:40]}...")
+                else:
+                    if resp.status_code in (403, 406):
+                        results.append(f"❌ Blocked (HTTP {resp.status_code}): {payload[:40]}...")
+                    elif resp.status_code >= 500:
+                        results.append(f"⚠️ Server error (HTTP {resp.status_code}): {payload[:40]}...")
+                    else:
+                        results.append(f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}...")
+
+            except requests.exceptions.Timeout:
+                results.append(f"❌ Timeout: {payload[:40]}...")
+            except requests.exceptions.RequestException as e:
+                results.append(f"❌ Request error: {e}")
+
+        self.feedback.setStyleSheet("color: #00ff00;" if any(r.startswith("✅") for r in results) else "color: #ffbb55;")
+        self.feedback.setText("\n".join(results))
+
+    def export_payloads(self):
+        if not self.current_payloads:
+            self.feedback.setText("⚠️ No payloads to export.")
+            return
+
+        options = QFileDialog.Options()
+        filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
+        if filename:
+            try:
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write("\n\n".join(self.current_payloads))
+                self.feedback.setStyleSheet("color: #00ff00;")
+                self.feedback.setText(f"✅ Payloads exported to {filename}")
+            except Exception as e:
+                self.feedback.setStyleSheet("color: #ff5555;")
+                self.feedback.setText(f"❌ Failed to export: {e}")
+
+    # --- FUZZING METHODS ADDED BELOW ---
+
+    def start_fuzzing(self):
+        url = self.url_input.text().strip()
+        if not url:
+            self.feedback.setText("⚠ Enter a valid target URL first.")
+            return
+
+        # Load payloads from xss.txt for fuzzing
+        path = os.path.join(self.payload_dir, "xss.txt")
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                payloads = [line.strip() for line in f if line.strip()]
+        except Exception as e:
+            self.feedback.setText(f"⚠ Failed to load payloads: {e}")
+            return
+
+        if not payloads:
+            self.feedback.setText("⚠ No payloads found for fuzzing.")
+            return
+
+                                  
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
