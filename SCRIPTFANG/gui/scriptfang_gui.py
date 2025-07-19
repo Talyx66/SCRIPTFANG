@@ -109,6 +109,16 @@ class ScriptFangGUI(QWidget):
         self.output.setFont(QFont("Courier", 12))
         self.output.setText("// XSS Payload will appear here\n")
 
+        self.feedback = QLabel("", self)
+        self.feedback.setGeometry(0, 270, self.width(), 30)
+        self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
+        self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.multi_button = QPushButton("Generate Multi- Payloads", self)
+        self.test_button = QPushButton("Test Payload", self)
+        self.export_button = QPushButton("Export Payload(s)", self)
+        self.fuzz_button = QPushButton("Fuzz Target", self)
+
         # Feedback label - centered horizontally
         self.feedback = QLabel("", self)
         self.feedback.setGeometry(
