@@ -166,7 +166,7 @@ class ScriptFangGUI(QWidget):
             btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
-        # Group the three buttons below payload buttons and center them as a block
+        # Group the four buttons below payload buttons and center them as a block
         multi_btn_width, multi_btn_height = 140, 40
         test_btn_width, test_btn_height = 140, 40
         export_btn_width, export_btn_height = 140, 40
