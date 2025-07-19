@@ -396,12 +396,14 @@ class ScriptFangGUI(QWidget):
 
     def export_payloads(self):
     current_text = self.output.toPlainText().strip()
+    
     if not current_text:
         self.feedback.setText("⚠️ No payloads to export.")
         return
 
     options = QFileDialog.Options()  # Correct capitalization here
     filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
+   
     if filename:
         try:
             with open(filename, "w", encoding="utf-8") as f:
@@ -417,6 +419,7 @@ class ScriptFangGUI(QWidget):
 
     def start_fuzzing(self):
         url = self.url_input.text().strip()
+       
         if not url:
             self.feedback.setText("⚠ Enter a valid target URL first.")
             return
