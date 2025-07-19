@@ -40,7 +40,7 @@ python3 gui.py
 
 ### Screenshots
 
-![screenshot 1](assets/vbox1.png)
+![screenshot 1](SCRIPTFANG/assets/vbox1.png)
 
 
 
