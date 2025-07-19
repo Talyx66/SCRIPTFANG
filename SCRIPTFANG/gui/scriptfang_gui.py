@@ -1,10 +1,8 @@
- 
-
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit, QFileDialog
 )
 from PyQt6.QtGui import QMovie, QFont, QTextCursor
-from PyQt6.QtCore import Qt, QSize, QThread, pyqtSignal  # <-- added here
+from PyQt6.QtCore import Qt, QSize, QThread, pyqtSignal
 import sys
 import os
 import random
@@ -109,47 +107,6 @@ class ScriptFangGUI(QWidget):
         self.output.setFont(QFont("Courier", 12))
         self.output.setText("// XSS Payload will appear here\n")
 
-        self.feedback = QLabel("", self)
-        self.feedback.setGeometry(0, 270, self.width(), 30)
-        self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
-        self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.multi_button = QPushButton("Generate Multi- Payloads", self)
-        self.test_button = QPushButton("Test Payload", self)
-        self.export_button = QPushButton("Export Payload(s)", self)
-        self.fuzz_button = QPushButton("Fuzz Target", self)
-
-        for button in [self.multi_button, self.test_button, self.export_button, self.fuzz_button]:
-            button.setStyleSheet(
-                "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 13px; border: 2px solid #00ff00; border-radius: 10px;"
-            )
-            button.setFont(QFont("Courier", 11))
-
-        multi_btn_width, multi_btn_height = 140, 40
-        test_btn_width, test_btn_height = 140, 40
-        export_btn_width, export_btn_height = 140, 40
-        fuzz_btn_width = 140
-        btn_spacing = 15
-
-        total_width = multi_btn_width + test_btn_width + export_btn_width + fuzz_btn_width + btn_spacing * 3
-        multi_btn_y = 462
-        start_x = (self.width() - total_width) // 2 - 10
-
-        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
-        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
-        self.export_button.setGeometry(
-            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
-            multi_btn_y,
-            export_btn_width,
-            export_btn_height
-        )
-        self.fuzz_button.setGeometry(
-            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing,
-            multi_btn_y,
-            fuzz_btn_width,
-            multi_btn_height
-        )
-     
         # Feedback label - centered horizontally
         self.feedback = QLabel("", self)
         self.feedback.setGeometry(
@@ -211,9 +168,10 @@ class ScriptFangGUI(QWidget):
         multi_btn_width, multi_btn_height = 140, 40
         test_btn_width, test_btn_height = 140, 40
         export_btn_width, export_btn_height = 140, 40
+        fuzz_btn_width = 140
         btn_spacing = 15
 
-        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 2
+        total_width = multi_btn_width + test_btn_width + export_btn_width + fuzz_btn_width + btn_spacing * 3
         multi_btn_y = second_row_y + btn_height + 25
         start_x = (self.width() - total_width) // 2
 
@@ -222,6 +180,7 @@ class ScriptFangGUI(QWidget):
         self.multi_button.setStyleSheet(
             "background-color: rgba(0,100,0,0.7); color: white; font-size: 12px; border-radius: 10px;"
         )
+        self.multi_button.setFont(QFont("Courier", 12))
         self.multi_button.clicked.connect(self.generate_multiple_payloads)
 
         self.test_button = QPushButton("Test Payload", self)
@@ -229,6 +188,7 @@ class ScriptFangGUI(QWidget):
         self.test_button.setStyleSheet(
             "background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
         )
+        self.test_button.setFont(QFont("Courier", 13))
         self.test_button.clicked.connect(self.test_payload)
 
         self.export_button = QPushButton("Export Payload(s)", self)
@@ -241,15 +201,20 @@ class ScriptFangGUI(QWidget):
         self.export_button.setStyleSheet(
             "background-color: rgba(128,128,0,0.7); color: white; font-size: 15px; border-radius: 8px;"
         )
+        self.export_button.setFont(QFont("Courier", 13))
         self.export_button.clicked.connect(self.export_payloads)
 
-        # --- ADD FUZZ BUTTON HERE ---
-        fuzz_btn_x = start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing
         self.fuzz_button = QPushButton("Fuzz Target", self)
-        self.fuzz_button.setGeometry(fuzz_btn_x, multi_btn_y, 140, 40)
+        self.fuzz_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing,
+            multi_btn_y,
+            fuzz_btn_width,
+            multi_btn_height
+        )
         self.fuzz_button.setStyleSheet(
             "background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;"
         )
+        self.fuzz_button.setFont(QFont("Courier", 13))
         self.fuzz_button.clicked.connect(self.start_fuzzing)
 
         # Footer label (GitHub + credit) at the bottom center
@@ -309,9 +274,10 @@ class ScriptFangGUI(QWidget):
         multi_btn_width, multi_btn_height = 140, 40
         test_btn_width, test_btn_height = 140, 40
         export_btn_width, export_btn_height = 140, 40
+        fuzz_btn_width = 140
         btn_spacing = 15
 
-        total_width = multi_btn_width + test_btn_width + export_btn_width + btn_spacing * 3  # added one more spacing for fuzz button
+        total_width = multi_btn_width + test_btn_width + export_btn_width + fuzz_btn_width + btn_spacing * 3
         multi_btn_y = second_row_y + btn_height + 25
         start_x = (self.width() - total_width) // 2
 
@@ -326,8 +292,8 @@ class ScriptFangGUI(QWidget):
         self.fuzz_button.setGeometry(
             start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing,
             multi_btn_y,
-            140,
-            40
+            fuzz_btn_width,
+            multi_btn_height
         )
 
         footer_height = 25
@@ -466,7 +432,19 @@ class ScriptFangGUI(QWidget):
             self.feedback.setText("⚠ No payloads found for fuzzing.")
             return
 
-                                  
+        # Start fuzzing thread (example usage)
+        self.fuzz_thread = FuzzThread(url, payloads)
+        self.fuzz_thread.update_signal.connect(self.append_feedback)
+        self.fuzz_thread.finished_signal.connect(lambda: self.feedback.setText("Fuzzing complete."))
+        self.fuzz_thread.start()
+        self.feedback.setText("⏳ Fuzzing started...")
+
+    def append_feedback(self, text):
+        old_text = self.feedback.text()
+        new_text = old_text + "\n" + text
+        self.feedback.setText(new_text)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     gui = ScriptFangGUI()
