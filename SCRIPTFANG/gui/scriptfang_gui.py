@@ -148,6 +148,7 @@ class ScriptFangGUI(QWidget):
             multi_btn_y,
             fuzz_btn_width,
             multi_btn_height
+        )
      
         # Feedback label - centered horizontally
         self.feedback = QLabel("", self)
