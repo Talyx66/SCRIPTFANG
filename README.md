@@ -46,7 +46,7 @@ python3 gui.py
 
 ### Preview
 
-![Live Demo](SCRIPTFANG/assets/Dragon3.git)
+![Live Demo 1](SCRIPTFANG/assets/Dragon3.git)
 
 ![Built](https://img.shields.io/badge/Built%20For-Kali_Linux-8B0000?style=for-the-badge)
 ![Language](https://img.shields.io/badge/Python-3.11-blue?style=flat-square)
