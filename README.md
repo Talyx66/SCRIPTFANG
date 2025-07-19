@@ -42,7 +42,10 @@ python3 gui.py
 
 ![screenshot 1](SCRIPTFANG/assets/vbox1.png)
 
+![screenshot 2](SCRIPTFANG/assets/vbox2.png)
 
+### Preview
+![Live Demo](SCRIPTFANG/assets/dragon2git.gif)
 
 ![Built](https://img.shields.io/badge/Built%20For-Kali_Linux-8B0000?style=for-the-badge)
 ![Language](https://img.shields.io/badge/Python-3.11-blue?style=flat-square)
