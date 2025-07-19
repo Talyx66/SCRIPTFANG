@@ -38,6 +38,9 @@ pip install -r requirements.txt
 python3 gui.py
 ```
 
+### Screenshots
+
+![screenshot 1](assets/vbox1.png)
 
 
 
