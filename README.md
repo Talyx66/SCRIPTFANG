@@ -20,15 +20,15 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 ## Installation
 1. Clone the Repository
 ```bash
-git clone https://github.com/Talyx66/ScriptFang.git
-cd ScriptFang
+1. git clone https://github.com/Talyx66/ScriptFang.git
+2. cd ScriptFang
 3. Install Requirements 
 ```
 2. Make sure you're using Python 3.9+. Then install dependencies:
 
 ```bash
 pip install -r requirements.txt
-Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt.
+(Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt)
 ```
 ## Usage.
 1.) Run the tool:
