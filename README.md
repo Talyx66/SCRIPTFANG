@@ -2,22 +2,22 @@
 Welcome to ScriptFang, the latest addition to the Fang family, my third custom ultimate tool for penetration testers and security researchers to generate, test, and fuzz XSS payloads with power, precision, and style. 
 
 ## Features
- ### Diverse Payload Generation
+ ### |Diverse Payload Generation|
 Generate classic, WAF bypass, Angular, script breakout, Cloudflare bypass payloads, and more.
 
-### Multi-Payload Generation
+### |Multi-Payload Generation|
 Create multiple payloads at once to maximize fuzzing coverage.
 
 ### Integrated Fuzzer
 Automatically fuzz target URLs with your entire payload arsenal. Tracks reflections, blocks, and errors in real time.
 
-### Sleek GUI
+### |Sleek GUI|
 PyQt6-powered interface with live feedback, animated background, and intuitive controls.
 
 ### |Export Capability|
 Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
-## Installation
+## |Installation|
 1. Clone the Repository
 ```bash
 1. git clone https://github.com/Talyx66/ScriptFang.git
@@ -30,7 +30,7 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 pip install -r requirements.txt
 (Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt)
 ```
-## Usage.
+## |Usage|
 1.) Run the tool:
 
 ```bash
