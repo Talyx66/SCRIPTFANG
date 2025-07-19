@@ -219,7 +219,7 @@ class ScriptFangGUI(QWidget):
 
         # Footer label (GitHub + credit) at the bottom center
         footer_height = 26
-        self.footer = QLabel("GitHub: Github.com/Talyx66  |  Made by Talyx", self)
+        self.footer = QLabel("Github.com/Talyx66  |  Made by Talyx", self)
         self.footer.setStyleSheet("color: #00ff00; background: transparent;")
         self.footer.setFont(QFont("Courier", 13))
         self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
