@@ -204,7 +204,6 @@ self.fuzz_button.setStyleSheet(
 )
 self.fuzz_button.clicked.connect(self.start_fuzzing)
 
-
         # Footer label (GitHub + credit) at the bottom center
         footer_height = 26
         self.footer = QLabel("GitHub: Github.com/Talyx66  |  Made by Talyx", self)
