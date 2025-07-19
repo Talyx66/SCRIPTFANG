@@ -119,6 +119,36 @@ class ScriptFangGUI(QWidget):
         self.export_button = QPushButton("Export Payload(s)", self)
         self.fuzz_button = QPushButton("Fuzz Target", self)
 
+        for button in [self.multi_button, self.test_button, self.export_button, self.fuzz_button]:
+            button.setStyleSheet(
+                "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 13px; border: 2px solid #00ff00; border-radius: 10px;"
+            )
+            button.setFont(QFont("Courier", 11))
+
+        multi_btn_width, multi_btn_height = 140, 40
+        test_btn_width, test_btn_height = 140, 40
+        export_btn_width, export_btn_height = 140, 40
+        fuzz_btn_width = 140
+        btn_spacing = 15
+
+        total_width = multi_btn_width + test_btn_width + export_btn_width + fuzz_btn_width + btn_spacing * 3
+        multi_btn_y = 462
+        start_x = (self.width() - total_width) // 2 - 10
+
+        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
+        self.test_button.setGeometry(start_x + multi_btn_width + btn_spacing, multi_btn_y, test_btn_width, test_btn_height)
+        self.export_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
+            multi_btn_y,
+            export_btn_width,
+            export_btn_height
+        )
+        self.fuzz_button.setGeometry(
+            start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing + export_btn_width + btn_spacing,
+            multi_btn_y,
+            fuzz_btn_width,
+            multi_btn_height
+     
         # Feedback label - centered horizontally
         self.feedback = QLabel("", self)
         self.feedback.setGeometry(
