@@ -1,7 +1,7 @@
 # ScriptFang — Advanced XSS Payload Generator & Fuzzer
 Welcome to ScriptFang, the latest addition to the Fang family, my third custom ultimate tool for penetration testers and security researchers to generate, test, and fuzz XSS payloads with power, precision, and style. 
 
-## Features
+## Features:
  ### |Diverse Payload Generation|
 Generate classic, WAF bypass, Angular, script breakout, Cloudflare bypass payloads, and more.
 
