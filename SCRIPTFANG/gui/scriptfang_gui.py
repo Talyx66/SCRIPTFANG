@@ -1,4 +1,4 @@
-scoot the "Generate mult-payloads, Test payload, Export payload(s), & Fuzz Target" Buttons over a smidge to the left to center it with the rest of my gui. Do it for me. Here is my GUI. Do not change anything else just that. 
+ 
 
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QWidget, QPushButton, QTextEdit, QLineEdit, QFileDialog
