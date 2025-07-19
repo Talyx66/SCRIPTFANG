@@ -14,7 +14,7 @@ Automatically fuzz target URLs with your entire payload arsenal. Tracks reflecti
 ### Sleek GUI
 PyQt6-powered interface with live feedback, animated background, and intuitive controls.
 
-### Export Capability
+### |Export Capability|
 Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
 ## Installation
