@@ -395,21 +395,23 @@ class ScriptFangGUI(QWidget):
         self.feedback.setText("\n".join(results))
 
     def export_payloads(self):
-        if not self.current_payloads:
-            self.feedback.setText("⚠️ No payloads to export.")
-            return
+    current_text = self.output.toPlainText().strip()
+    if not current_text:
+        self.feedback.setText("⚠️ No payloads to export.")
+        return
 
-        options = QFileDialog.Options()
-        filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
-        if filename:
-            try:
-                with open(filename, "w", encoding="utf-8") as f:
-                    f.write("\n\n".join(self.current_payloads))
-                self.feedback.setStyleSheet("color: #00ff00;")
-                self.feedback.setText(f"✅ Payloads exported to {filename}")
-            except Exception as e:
-                self.feedback.setStyleSheet("color: #ff5555;")
-                self.feedback.setText(f"❌ Failed to export: {e}")
+    options = QFileDialog.Options()  # Correct capitalization here
+    filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
+    if filename:
+        try:
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(current_text)
+            self.feedback.setStyleSheet("color: #00ff00;")
+            self.feedback.setText(f"✅ Payload(s) exported to {filename}")
+        except Exception as e:
+            self.feedback.setStyleSheet("color: #ff5555;")
+            self.feedback.setText(f"❌ Failed to export: {e}")
+
 
     # --- FUZZING METHODS ADDED BELOW ---
 
