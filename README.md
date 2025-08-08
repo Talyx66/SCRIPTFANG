@@ -17,7 +17,7 @@ PyQt6-powered interface with live feedback, animated background, and intuitive c
 ### |Export Capability|
 Save results and payloads in JSON or CSV for offline analysis or manual testing.
 
-## |Installation|
+## Installation:
 1. Clone the Repository
 ```bash
 1. git clone https://github.com/Talyx66/ScriptFang.git
