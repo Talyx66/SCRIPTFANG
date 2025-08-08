@@ -79,4 +79,4 @@ The creator is not liable for misuse or unauthorized activities.
 
 # Contact:
 Created by: Talyx
-GitHub: github.com/Talyx66
+       GitHub: github.com/Talyx66
