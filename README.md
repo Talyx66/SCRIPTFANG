@@ -30,7 +30,7 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 pip install -r requirements.txt
 (Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt)
 ```
-## |Usage|
+## Usage:
 1.) Run the tool:
 
 ```bash
