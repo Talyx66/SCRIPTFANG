@@ -38,11 +38,11 @@ pip install -r requirements.txt
 python3 gui.py
 ```
 
-### Screenshots
+### |Screenshots|
 
 ![screenshot 1](SCRIPTFANG/assets/vbox1.png)
 
-### Preview
+### |Preview|
 
 ![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
 
@@ -63,20 +63,20 @@ python3 gui.py
 
 6. Export results via the Export Results button.
 
-## Payload Management
+## Payload Management:
 1. Payloads are stored in /tools/payloads/
 
 2. Each .txt file corresponds to a specific category
 
 3. Edit or expand these files to supercharge your fuzzing arsenal
 
-## Contribution
+## Contribution:
 Pull requests, payload improvements, and community contributions are always welcome.
 
-## Disclaimer
+## Disclaimer:
 Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
 The creator is not liable for misuse or unauthorized activities.
 
-# Contact
+# Contact:
 Created by: Talyx
 GitHub: github.com/Talyx66
