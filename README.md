@@ -8,7 +8,7 @@ Generate classic, WAF bypass, Angular, script breakout, Cloudflare bypass payloa
 ### |Multi-Payload Generation|
 Create multiple payloads at once to maximize fuzzing coverage.
 
-### Integrated Fuzzer
+### |Integrated Fuzzer|
 Automatically fuzz target URLs with your entire payload arsenal. Tracks reflections, blocks, and errors in real time.
 
 ### |Sleek GUI|
