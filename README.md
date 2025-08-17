@@ -21,22 +21,22 @@ The creator is not liable for misuse or unauthorized activities.
 ![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
 
 # Features:
----
+
 ## |Diverse Payload Generation|
 Generate classic, WAF bypass, Angular, script breakout, Cloudflare bypass payloads, and more.
----
+
 ## |Multi-Payload Generation|
 Create multiple payloads at once to maximize fuzzing coverage.
----
+
 ## |Integrated Fuzzer|
 Automatically fuzz target URLs with your entire payload arsenal. Tracks reflections, blocks, and errors in real time.
----
+
 ## |Sleek GUI|
 PyQt6-powered interface with live feedback, animated background, and intuitive controls.
----
+
 ## |Export Capability|
 Save results and payloads in JSON or CSV for offline analysis or manual testing.
----
+
 
 ## Installation:
 
