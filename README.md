@@ -78,6 +78,5 @@ Pull requests, payload improvements, and community contributions are always welc
 Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
 The creator is not liable for misuse or unauthorized activities.
 
-# Contact:
-Created by: Talyx
-       GitHub: github.com/Talyx66
+# Contact & Created By:
+Talyx   GitHub: github.com/Talyx66
