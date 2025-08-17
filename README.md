@@ -46,7 +46,7 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 2. cd ScriptFang
 3. Install Requirements 
 ```
-2. Make sure you're using Python 3.9+. Then install dependencies:
+2. (Make sure you're using Python 3.9+. Then install dependencies:)
 
 ```
 pip install -r requirements.txt
@@ -57,19 +57,6 @@ pip install -r requirements.txt
 #### Run the tool:
 ```
 python3 gui.py
-```
-
-## Steps:
-```
-2. Enter your target URL (e.g., https://victim.com/search?q=).
-
-3. Choose a payload category or use Multi-Payload Generation.
-
-4. Click Test Payload or Fuzz Target to begin testing.
-
-5. Monitor live output for reflection results or blocks.
-
-6. Export results via the Export Results button.
 ```
 ## Payload Management:
 ```
