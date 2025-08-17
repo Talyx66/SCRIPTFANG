@@ -12,6 +12,13 @@ Welcome to ScriptFang, the latest addition to the Fang family, my third custom u
 Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
 The creator is not liable for misuse or unauthorized activities.
 
+### |Screenshots|
+
+![screenshot 1](SCRIPTFANG/assets/vbox1.png)
+
+### |Preview|
+
+![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
 
 ### Features:
 ---
@@ -32,36 +39,28 @@ Save results and payloads in JSON or CSV for offline analysis or manual testing.
 ---
 
 ## Installation:
-1. Clone the Repository
-```bash
+
+1.) Clone the Repository
+```
 1. git clone https://github.com/Talyx66/ScriptFang.git
 2. cd ScriptFang
 3. Install Requirements 
 ```
 2. Make sure you're using Python 3.9+. Then install dependencies:
 
-```bash
+```
 pip install -r requirements.txt
 (Ensure PyQt6, requests, beautifulsoup4, and lxml are included in requirements.txt)
 ```
 ## Usage:
-1.) Run the tool:
 
-```bash
-
+#### Run the tool:
+```
 python3 gui.py
 ```
 
-### |Screenshots|
-
-![screenshot 1](SCRIPTFANG/assets/vbox1.png)
-
-### |Preview|
-
-![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
-
 ## Steps:
-
+```
 2. Enter your target URL (e.g., https://victim.com/search?q=).
 
 3. Choose a payload category or use Multi-Payload Generation.
@@ -71,13 +70,14 @@ python3 gui.py
 5. Monitor live output for reflection results or blocks.
 
 6. Export results via the Export Results button.
-
+```
 ## Payload Management:
+```
 1. Payloads are stored in /tools/payloads/
 
 2. Each .txt file corresponds to a specific category
 
 3. Edit or expand these files to supercharge your fuzzing arsenal
-
+```
 # Engineered & Developed by:
 Talyx   https://Github.com/Talyx66
