@@ -71,8 +71,6 @@ python3 gui.py
 
 3. Edit or expand these files to supercharge your fuzzing arsenal
 
-## Contribution:
-Pull requests, payload improvements, and community contributions are always welcome.
 
 ## Disclaimer:
 Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
