@@ -14,7 +14,7 @@ The creator is not liable for misuse or unauthorized activities.
 
 ### Preview
 
-![screenshot 1](SCRIPTFANG/assets/vbox1.png)
+![screenshot 1](SCRIPTFANG/assets/Scriptfang3.png)
 
 ### Live Preview
 
