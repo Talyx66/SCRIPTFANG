@@ -21,7 +21,7 @@ The creator is not liable for misuse or unauthorized activities.
 
 ### Recent Updates 8/17/25
 ```
-
+updated ReadME format, image resize 
 ```
 
 # Features:
