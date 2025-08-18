@@ -67,3 +67,4 @@ python3 gui.py
 ```
 # Engineered & Developed by:
 Talyx   https://Github.com/Talyx66
+---
