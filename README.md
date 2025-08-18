@@ -12,11 +12,11 @@ Welcome to ScriptFang, the latest addition to the Fang family, my third custom u
 Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
 The creator is not liable for misuse or unauthorized activities.
 
-### |Screenshots|
+### Preview
 
 ![screenshot 1](SCRIPTFANG/assets/vbox1.png)
 
-### |Preview|
+### Live Preview
 
 ![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
 
