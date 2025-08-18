@@ -6,7 +6,6 @@
 ![Creator](https://img.shields.io/badge/Made%20by-Talyx-purple?style=flat&logo=github)
 
 # SCRIPTFANG - Advanced XSS Payload Generator & Fuzzer
-Welcome to ScriptFang, the latest addition to the Fang family, my third custom ultimate tool for penetration testers and security researchers to generate, test, and fuzz XSS payloads with power, precision, and style. 
 
 ## Disclaimer:
 Use ScriptFang responsibly. Only test systems you have explicit permission to assess.
