@@ -19,6 +19,11 @@ The creator is not liable for misuse or unauthorized activities.
 
 ![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
 
+### Recent Updates 8/17/25
+```
+
+```
+
 # Features:
 
 ## |Diverse Payload Generation|
