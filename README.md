@@ -11,7 +11,7 @@
 # SCRIPTFANG - Advanced XSS Payload Generator & Fuzzer
 
 ## Disclaimer:
-* *ScriptFang is a powerful offensive security and payload generation toolkit, intended strictly for experienced cybersecurity professionals, Red-Team operators, and ethical hackers. Use of this tool without proper authorization is illegal and may result in civil and criminal penalties. The creator assumes no liability for any misuse, damage, or legal consequences arising from unauthorized usage. Always obtain explicit permission before using ScriptFang in any environment* *
+* *ScriptFang is a powerful offensive security and payload generation toolkit, intended strictly for experienced cybersecurity professionals, Red-Team operators, and ethical hackers. Using this tool without proper authorization is illegal and may result in both civil and criminal penalties. The creator assumes no liability for any misuse, damage, or legal consequences arising from unauthorized usage. Always obtain explicit permission before using ScriptFang in any environment. ® All Rights Reserved* *
 
 ### Preview
 
