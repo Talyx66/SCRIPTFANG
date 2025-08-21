@@ -46,7 +46,7 @@ class ScriptFangGUI(QWidget):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.payload_dir = os.path.join(base_dir, "tools", "payloads")
 
-        gif_path = os.path.join(base_dir, "assets", "dragons.gif")
+        gif_path = os.path.join(base_dir, "assets", "Fangvenom1")
         print("Resolved GIF path:", gif_path)
 
         # Background GIF label
@@ -432,3 +432,4 @@ if __name__ == "__main__":
     window = ScriptFangGUI()
     window.show()
     sys.exit(app.exec())
+
