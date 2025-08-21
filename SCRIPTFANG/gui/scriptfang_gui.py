@@ -8,6 +8,7 @@ import os
 import random
 import re
 import requests
+import datetime
 
 
 # Fuzzer thread to avoid freezing GUI
@@ -170,8 +171,14 @@ class ScriptFangGUI(QWidget):
         self.export_button.setFont(QFont("Courier", 13))
         self.export_button.clicked.connect(self.export_payloads)
 
+        self.report_button = QPushButton("Export Report", self)
+        self.report_button.setGeometry(start_x + 465, second_row_y + btn_height + 25, 140, 40)
+        self.report_button.setStyleSheet("background-color: rgba(150,75,0,0.7); color: white; font-size: 15px; border-radius: 8px;")
+        self.report_button.setFont(QFont("Courier", 13))
+        self.report_button.clicked.connect(self.export_report)
+
         self.fuzz_button = QPushButton("Fuzz Target", self)
-        self.fuzz_button.setGeometry(start_x + 465, second_row_y + btn_height + 25, 140, 40)
+        self.fuzz_button.setGeometry(start_x + 620, second_row_y + btn_height + 25, 140, 40)
         self.fuzz_button.setStyleSheet("background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;")
         self.fuzz_button.setFont(QFont("Courier", 13))
         self.fuzz_button.clicked.connect(self.start_fuzzing)
@@ -292,6 +299,32 @@ class ScriptFangGUI(QWidget):
                 self.feedback.setPlainText(f"✅ Payloads exported to {filename}")
             except Exception as e:
                 self.feedback.setPlainText(f"❌ Failed to export: {e}")
+
+    def export_report(self):
+        if not self.current_payloads and not self.feedback.toPlainText().strip():
+            self.feedback.setPlainText("⚠️ Nothing to report.")
+            return
+        filename, _ = QFileDialog.getSaveFileName(self, "Save Report", "", "Text Files (*.txt)")
+        if filename:
+            try:
+                report_lines = []
+                report_lines.append("==== ScriptFang Report ====")
+                report_lines.append(f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                report_lines.append(f"Target(s): {self.url_input.text().strip()}")
+                report_lines.append("")
+                report_lines.append("=== Payloads Used ===")
+                report_lines.extend(self.current_payloads if self.current_payloads else ["(None)"])
+                report_lines.append("")
+                report_lines.append("=== Feedback / Results ===")
+                report_lines.append(self.feedback.toPlainText().strip() or "(No feedback)")
+                report_text = "\n".join(report_lines)
+
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write(report_text)
+
+                self.feedback.setPlainText(f"✅ Report exported to {filename}")
+            except Exception as e:
+                self.feedback.setPlainText(f"❌ Failed to export report: {e}")
 
     def start_fuzzing(self):
         target_text = self.url_input.text().strip()
