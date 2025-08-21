@@ -74,6 +74,20 @@ class ScriptFangGUI(QWidget):
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title.setGeometry(0, 20, self.width(), 50)
 
+        # GitHub link top-left
+        self.github_link = QLabel("Github.com/Talyx66", self)
+        self.github_link.setStyleSheet("color: #00ff00; background: transparent;")
+        self.github_link.setFont(QFont("Courier", 13))
+        self.github_link.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.github_link.setGeometry(10, 10, 250, 25)
+
+        # Credit top-right
+        self.made_by = QLabel("Made by Talyx", self)
+        self.made_by.setStyleSheet("color: #00ff00; background: transparent;")
+        self.made_by.setFont(QFont("Courier", 13))
+        self.made_by.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        self.made_by.setGeometry(self.width() - 260, 10, 250, 25)
+
         # Target URL input - centered horizontally
         self.url_input = QLineEdit(self)
         self.url_input.setPlaceholderText("Enter target URL (e.g. https://victim.com/search?q=)")
@@ -107,25 +121,19 @@ class ScriptFangGUI(QWidget):
         self.output.setFont(QFont("Courier", 12))
         self.output.setText("// XSS Payload will appear here\n")
 
-        # Feedback / fuzz output box
-        self.fuzz_output = QTextEdit(self)
-        self.fuzz_output.setGeometry(
-            (self.width() - 700) // 2,
+        # Feedback label - centered horizontally
+        self.feedback = QTextEdit(self)
+        self.feedback.setGeometry(
+            (self.width() - output_width) // 2,
             270,
-            700,
-            120
+            output_width,
+            150
         )
-        self.fuzz_output.setReadOnly(True)
-        self.fuzz_output.setStyleSheet(
-            "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 13px; border: 2px solid #00ff00; border-radius: 10px;"
+        self.feedback.setReadOnly(True)
+        self.feedback.setStyleSheet(
+            "background-color: rgba(0,0,0,0.6); color: #00ff00; font-size: 14px; border: 2px solid #00ff00; border-radius: 10px;"
         )
-        self.fuzz_output.setFont(QFont("Courier", 12))
-
-        # Feedback label
-        self.feedback = QLabel("", self)
-        self.feedback.setGeometry(0, 400, self.width(), 30)
-        self.feedback.setStyleSheet("color: #00ff00; background: transparent; font-size: 14px;")
-        self.feedback.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.feedback.setFont(QFont("Courier", 12))
 
         # Buttons config: (label, file_name)
         self.payload_buttons = [
@@ -148,9 +156,9 @@ class ScriptFangGUI(QWidget):
 
         # Starting positions for button grid
         start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
-        start_y = 440
+        start_y = 430
 
-        # First row buttons
+        # Create first row buttons
         for idx, (label, filename) in enumerate(self.payload_buttons[:buttons_per_row]):
             x = start_x + idx * (btn_width + spacing)
             btn = QPushButton(label, self)
@@ -226,22 +234,80 @@ class ScriptFangGUI(QWidget):
         self.fuzz_button.setFont(QFont("Courier", 13))
         self.fuzz_button.clicked.connect(self.start_fuzzing)
 
-        # Footer label
-        footer_height = 26
-        self.footer = QLabel("Github.com/Talyx66  |  Made by Talyx", self)
-        self.footer.setStyleSheet("color: #00ff00; background: transparent;")
-        self.footer.setFont(QFont("Courier", 13))
-        self.footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.footer.setGeometry(0, self.height() - footer_height, self.width(), footer_height)
-
         # Store current payloads
         self.current_payloads = []
 
-    # --- RESIZE EVENT ---
     def resizeEvent(self, event):
         self.bg_label.setGeometry(0, 0, self.width(), self.height())
         if self.movie and self.movie.isValid():
             self.movie.setScaledSize(QSize(self.width(), self.height()))
+
+        input_width = 600
+        output_width = 700
+        btn_width = 140
+        btn_height = 35
+        spacing = 15
+        buttons_per_row = 4
+
+        self.url_input.setGeometry(
+            (self.width() - input_width) // 2,
+            90,
+            input_width,
+            35
+        )
+        self.output.setGeometry(
+            (self.width() - output_width) // 2,
+            150,
+            output_width,
+            110
+        )
+        self.feedback.setGeometry(
+            (self.width() - output_width) // 2,
+            270,
+            output_width,
+            150
+        )
+
+        # Reposition buttons
+        start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
+        start_y = 430
+        for idx, label in enumerate(list(self.buttons.keys())[:buttons_per_row]):
+            x = start_x + idx * (btn_width + spacing)
+            self.buttons[label].setGeometry(x, start_y, btn_width, btn_height)
+
+        second_row_y = start_y + btn_height + 12
+        for idx, label in enumerate(list(self.buttons.keys())[buttons_per_row:buttons_per_row*2]):
+            x = start_x + idx * (btn_width + spacing)
+            self.buttons[label].setGeometry(x, second_row_y, btn_width, btn_height)
+
+        multi_btn_width, multi_btn_height = 140, 40
+        test_btn_width, test_btn_height = 140, 40
+        export_btn_width, export_btn_height = 140, 40
+        fuzz_btn_width = 140
+
+        total_width = multi_btn_width + test_btn_width + export_btn_width + fuzz_btn_width + spacing * 3
+        multi_btn_y = second_row_y + btn_height + 25
+        start_x = (self.width() - total_width) // 2
+
+        self.multi_button.setGeometry(start_x, multi_btn_y, multi_btn_width, multi_btn_height)
+        self.test_button.setGeometry(start_x + multi_btn_width + spacing, multi_btn_y, test_btn_width, test_btn_height)
+        self.export_button.setGeometry(
+            start_x + multi_btn_width + spacing + test_btn_width + spacing,
+            multi_btn_y,
+            export_btn_width,
+            export_btn_height
+        )
+        self.fuzz_button.setGeometry(
+            start_x + multi_btn_width + spacing + test_btn_width + spacing + export_btn_width + spacing,
+            multi_btn_y,
+            fuzz_btn_width,
+            multi_btn_height
+        )
+
+        # Reposition top links
+        self.github_link.setGeometry(10, 10, 250, 25)
+        self.made_by.setGeometry(self.width() - 260, 10, 250, 25)
+
         super().resizeEvent(event)
 
     # --- PAYLOAD METHODS ---
@@ -257,6 +323,9 @@ class ScriptFangGUI(QWidget):
             payload = random.choice(payloads)
             self.current_payloads = [payload]
             self.output.setPlainText(payload)
+            cursor = self.output.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.Start)
+            self.output.setTextCursor(cursor)
         except Exception as e:
             self.output.setPlainText(f"⚠️ Error loading {filename}: {e}")
             self.current_payloads = []
@@ -273,6 +342,9 @@ class ScriptFangGUI(QWidget):
             selected = random.sample(payloads, min(5, len(payloads)))
             self.current_payloads = selected
             self.output.setPlainText("\n\n".join(selected))
+            cursor = self.output.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.Start)
+            self.output.setTextCursor(cursor)
         except Exception as e:
             self.output.setPlainText(f"⚠️ Error loading xss.txt: {e}")
             self.current_payloads = []
@@ -280,14 +352,15 @@ class ScriptFangGUI(QWidget):
     def test_payload(self):
         target_url = self.url_input.text().strip()
         if not target_url:
-            self.feedback.setText("⚠️ Enter a valid target URL first.")
+            self.feedback.setPlainText("⚠️ Enter a valid target URL first.")
             return
         if not self.current_payloads:
-            self.feedback.setText("⚠️ Generate payload(s) first.")
+            self.feedback.setPlainText("⚠️ Generate payload(s) first.")
             return
 
-        self.fuzz_output.clear()
-        self.feedback.setText("⏳ Testing payload(s)...")
+        self.feedback.setPlainText("⏳ Testing payload(s) on target...")
+        self.repaint()  # Force UI update
+
         results = []
 
         for payload in self.current_payloads:
@@ -295,7 +368,6 @@ class ScriptFangGUI(QWidget):
             try:
                 resp = requests.get(test_url, timeout=10)
                 content = resp.text
-
                 patterns = [
                     re.escape(payload),
                     r"(?i)<script>alert\(",
@@ -304,8 +376,7 @@ class ScriptFangGUI(QWidget):
                     r"(?i)javascript:",
                     r"(?i)document\.cookie",
                 ]
-                matched = any(re.search(p, content) for p in patterns)
-
+                matched = any(re.search(pattern, content) for pattern in patterns)
                 if matched:
                     results.append(f"✅ Payload reflected: {payload[:40]}...")
                 else:
@@ -315,60 +386,49 @@ class ScriptFangGUI(QWidget):
                         results.append(f"⚠️ Server error (HTTP {resp.status_code}): {payload[:40]}...")
                     else:
                         results.append(f"⚠️ No reflection (HTTP {resp.status_code}): {payload[:40]}...")
-
             except requests.exceptions.Timeout:
                 results.append(f"❌ Timeout: {payload[:40]}...")
             except requests.exceptions.RequestException as e:
                 results.append(f"❌ Request error: {e}")
 
-        for r in results:
-            self.fuzz_output.append(r)
-        self.feedback.setText("✅ Test complete.")
+        self.feedback.setPlainText("\n".join(results))
 
     def export_payloads(self):
         if not self.current_payloads:
-            self.feedback.setText("⚠️ No payloads to export.")
+            self.feedback.setPlainText("⚠️ No payloads to export.")
             return
-
-        try:
-            options = QFileDialog.Options()
-            filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
-            if filename:
+        options = QFileDialog.Options()
+        filename, _ = QFileDialog.getSaveFileName(self, "Save Payloads", "", "Text Files (*.txt)", options=options)
+        if filename:
+            try:
                 with open(filename, "w", encoding="utf-8") as f:
-                    f.write("\n".join(self.current_payloads))
-                self.feedback.setText(f"✅ Payloads exported to {filename}")
-        except Exception as e:
-            self.feedback.setText(f"❌ Failed to export: {e}")
+                    f.write("\n\n".join(self.current_payloads))
+                self.feedback.setPlainText(f"✅ Payloads exported to {filename}")
+            except Exception as e:
+                self.feedback.setPlainText(f"❌ Failed to export: {e}")
 
-    # --- FUZZING ---
+    # --- FUZZING METHODS ---
     def start_fuzzing(self):
         url = self.url_input.text().strip()
         if not url:
-            self.feedback.setText("⚠ Enter a valid target URL first.")
+            self.feedback.setPlainText("⚠ Enter a valid target URL first.")
             return
-
-        path = os.path.join(self.payload_dir, "xss.txt")
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                payloads = [line.strip() for line in f if line.strip()]
-        except Exception as e:
-            self.feedback.setText(f"⚠ Failed to load payloads: {e}")
+        if not self.current_payloads:
+            self.feedback.setPlainText("⚠ Generate payloads first.")
             return
-
-        if not payloads:
-            self.feedback.setText("⚠ No payloads found for fuzzing.")
-            return
-
-        self.fuzz_output.clear()
-        self.fuzz_thread = FuzzThread(url, payloads)
-        self.fuzz_thread.update_signal.connect(self.fuzz_output.append)
-        self.fuzz_thread.finished_signal.connect(lambda: self.fuzz_output.append("✅ Fuzzing complete."))
+        self.feedback.setPlainText("⏳ Starting fuzzing...\n")
+        self.fuzz_thread = FuzzThread(url, self.current_payloads)
+        self.fuzz_thread.update_signal.connect(self.update_fuzz_feedback)
+        self.fuzz_thread.finished_signal.connect(lambda: self.feedback.append("✅ Fuzzing completed"))
         self.fuzz_thread.start()
-        self.feedback.setText("⏳ Fuzzing started...")
+
+    def update_fuzz_feedback(self, text):
+        self.feedback.append(text)
+        self.feedback.moveCursor(QTextCursor.MoveOperation.End)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    gui = ScriptFangGUI()
-    gui.show()
+    window = ScriptFangGUI()
+    window.show()
     sys.exit(app.exec())
