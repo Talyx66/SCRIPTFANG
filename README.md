@@ -8,7 +8,7 @@
 ![OS](https://img.shields.io/badge/OS-Kali_Linux%20%7C%20Ubuntu%20%7C%20Windows-blue?style=flat-square)
 
 
-# SCRIPTFANG - Advanced XSS Payload Generator & Fuzzer
+# SCRIPTFANG - Advanced XSS Payload Generator & Fuzzer v2.0
 
 ## Disclaimer:
 * *ScriptFang is a powerful offensive security and payload generation toolkit, intended strictly for experienced cybersecurity professionals, Red-Team operators, and ethical hackers. Using this tool without proper authorization is illegal and may result in both civil and criminal penalties. The creator assumes no liability for any misuse, damage, or legal consequences arising from unauthorized usage. Always obtain explicit permission before using ScriptFang in any environment. ® All Rights Reserved* *
