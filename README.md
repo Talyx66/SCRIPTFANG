@@ -15,11 +15,11 @@
 
 ### Preview
 
-![screenshot 1](SCRIPTFANG/assets/Fang2.png)
+![screenshot 1](SCRIPTFANG/assets/Fang3.png)
 
 ### Live Preview
 
-![Live Demo 1](SCRIPTFANG/assets/Fang1.gif)
+![Live Demo 1](SCRIPTFANG/assets/Fang0.gif)
 
 ### Recent Updates 8/17/25 SCRIPTFANG v2.0
 ```
