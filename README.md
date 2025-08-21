@@ -23,7 +23,7 @@
 
 ### Recent Updates 8/17/25
 ```
-updated ReadME format, image resize 
+updated ReadME format, image resize, New GUI background, Polished modules, hardened & more advanced feedback system, export error fixed, fuzzer=live feedback
 ```
 
 # Features:
