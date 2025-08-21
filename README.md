@@ -15,11 +15,11 @@
 
 ### Preview
 
-![screenshot 1](SCRIPTFANG/assets/Scriptfang3.png)
+![screenshot 1](SCRIPTFANG/assets/Fang2.png)
 
 ### Live Preview
 
-![Live Demo 1](SCRIPTFANG/assets/Dragon3.gif)
+![Live Demo 1](SCRIPTFANG/assets/Fang1.gif)
 
 ### Recent Updates 8/17/25
 ```
