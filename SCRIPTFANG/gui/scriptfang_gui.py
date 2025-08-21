@@ -135,6 +135,7 @@ class ScriptFangGUI(QWidget):
         start_x = (self.width() - (btn_width * buttons_per_row + spacing * (buttons_per_row - 1))) // 2
         start_y = 430
 
+        # First row
         for idx, (label, filename) in enumerate(self.payload_buttons[:buttons_per_row]):
             x = start_x + idx * (btn_width + spacing)
             btn = QPushButton(label, self)
@@ -143,9 +144,13 @@ class ScriptFangGUI(QWidget):
             btn.clicked.connect(lambda checked, f=filename: self.generate_payload_from_file(f))
             self.buttons[label] = btn
 
+        # Second row
+        second_row_buttons = self.payload_buttons[buttons_per_row:buttons_per_row*2]
+        total_width = len(second_row_buttons) * btn_width + (len(second_row_buttons) - 1) * spacing
+        start_x2 = (self.width() - total_width) // 2
         second_row_y = start_y + btn_height + 12
-        for idx, (label, filename) in enumerate(self.payload_buttons[buttons_per_row:buttons_per_row*2]):
-            x = start_x + idx * (btn_width + spacing)
+        for idx, (label, filename) in enumerate(second_row_buttons):
+            x = start_x2 + idx * (btn_width + spacing)
             btn = QPushButton(label, self)
             btn.setGeometry(x, second_row_y, btn_width, btn_height)
             btn.setStyleSheet("background-color: rgba(0,128,0,0.7); color: white; font-size: 13px; border-radius: 6px;")
@@ -153,35 +158,27 @@ class ScriptFangGUI(QWidget):
             self.buttons[label] = btn
 
         # Multi/Test/Export/Fuzz buttons
-        self.multi_button = QPushButton("Generate Payloads", self)
-        self.multi_button.setGeometry(start_x, second_row_y + btn_height + 25, 140, 40)
-        self.multi_button.setStyleSheet("background-color: rgba(0,100,0,0.7); color: white; font-size: 12px; border-radius: 10px;")
-        self.multi_button.setFont(QFont("Courier", 12))
-        self.multi_button.clicked.connect(self.generate_multiple_payloads)
+        multi_buttons = [
+            ("Generate Payloads", self.generate_multiple_payloads, "rgba(0,100,0,0.7)"),
+            ("Test Payload", self.test_payload, "rgba(128,0,0,0.7)"),
+            ("Export Payloads", self.export_payloads, "rgba(128,128,0,0.7)"),
+            ("Export Report", self.export_report, "rgba(150,75,0,0.7)"),
+            ("Fuzz Target", self.start_fuzzing, "rgba(0,0,150,0.7)")
+        ]
+        mb_width = 140
+        mb_height = 40
+        mb_spacing = 15
+        total_mb_width = len(multi_buttons) * mb_width + (len(multi_buttons) - 1) * mb_spacing
+        start_x_mb = (self.width() - total_mb_width) // 2
+        mb_y = second_row_y + btn_height + 25
 
-        self.test_button = QPushButton("Test Payload", self)
-        self.test_button.setGeometry(start_x + 155, second_row_y + btn_height + 25, 140, 40)
-        self.test_button.setStyleSheet("background-color: rgba(128,0,0,0.7); color: white; font-size: 15px; border-radius: 8px;")
-        self.test_button.setFont(QFont("Courier", 13))
-        self.test_button.clicked.connect(self.test_payload)
-
-        self.export_button = QPushButton("Export Payloads", self)
-        self.export_button.setGeometry(start_x + 310, second_row_y + btn_height + 25, 140, 40)
-        self.export_button.setStyleSheet("background-color: rgba(128,128,0,0.7); color: white; font-size: 15px; border-radius: 8px;")
-        self.export_button.setFont(QFont("Courier", 13))
-        self.export_button.clicked.connect(self.export_payloads)
-
-        self.report_button = QPushButton("Export Report", self)
-        self.report_button.setGeometry(start_x + 465, second_row_y + btn_height + 25, 140, 40)
-        self.report_button.setStyleSheet("background-color: rgba(150,75,0,0.7); color: white; font-size: 15px; border-radius: 8px;")
-        self.report_button.setFont(QFont("Courier", 13))
-        self.report_button.clicked.connect(self.export_report)
-
-        self.fuzz_button = QPushButton("Fuzz Target", self)
-        self.fuzz_button.setGeometry(start_x + 620, second_row_y + btn_height + 25, 140, 40)
-        self.fuzz_button.setStyleSheet("background-color: rgba(0,0,150,0.7); color: white; font-size: 15px; border-radius: 8px;")
-        self.fuzz_button.setFont(QFont("Courier", 13))
-        self.fuzz_button.clicked.connect(self.start_fuzzing)
+        for idx, (label, func, color) in enumerate(multi_buttons):
+            x = start_x_mb + idx * (mb_width + mb_spacing)
+            btn = QPushButton(label, self)
+            btn.setGeometry(x, mb_y, mb_width, mb_height)
+            btn.setStyleSheet(f"background-color: {color}; color: white; font-size: 13px; border-radius: 8px;")
+            btn.setFont(QFont("Courier", 12))
+            btn.clicked.connect(func)
 
         self.current_payloads = []
 
