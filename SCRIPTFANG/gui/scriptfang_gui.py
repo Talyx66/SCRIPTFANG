@@ -208,7 +208,7 @@ class ScriptFangGUI(QWidget):
         self.test_button.setFont(QFont("Courier", 13))
         self.test_button.clicked.connect(self.test_payload)
 
-        self.export_button = QPushButton("Export Payload(s)", self)
+        self.export_button = QPushButton("Export Payloads", self)
         self.export_button.setGeometry(
             start_x + multi_btn_width + btn_spacing + test_btn_width + btn_spacing,
             multi_btn_y,
@@ -432,4 +432,5 @@ if __name__ == "__main__":
     window = ScriptFangGUI()
     window.show()
     sys.exit(app.exec())
+
 
