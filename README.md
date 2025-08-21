@@ -21,7 +21,7 @@
 
 ![Live Demo 1](SCRIPTFANG/assets/Fang1.gif)
 
-### Recent Updates 8/17/25
+### Recent Updates 8/17/25 SCRIPTFANG v2.0
 ```
 updated ReadME format, image resize, New GUI background, Polished modules, hardened & more advanced feedback system, export error fixed, fuzzer=live feedback
 ```
