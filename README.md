@@ -1,4 +1,4 @@
-![screenshot 2](SCRIPTFANG/assets/scriptfang1.png)
+![screenshot 2](SCRIPTFANG/assets/Scriptfang.png)
 
 ![Built](https://img.shields.io/badge/Built%20For-Kali_Linux-8B0000?style=for-the-badge)
 ![Language](https://img.shields.io/badge/Python-3.13.5-blue?style=flat-square)
